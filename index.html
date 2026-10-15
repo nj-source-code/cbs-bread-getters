@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chris Bridgeforth presents: breadgetters</title>
+  <title>Chris Bridgeforth presents: breadgetters // v4.8</title>
   <style>
     :root {
       --bg-main: #050608;
@@ -64,6 +64,16 @@
       letter-spacing: 1px;
       color: var(--brand-text);
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .version-tag {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: normal;
     }
 
     .top-telemetry-box {
@@ -224,20 +234,21 @@
       animation: flipCoin 0.6s ease-in-out;
     }
 
-    /* Blackjack Visual Cards */
+    /* Blackjack Visual Cards - Fixed layout to prevent overlap */
     .card-container {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
       margin: 8px 0;
-      min-height: 50px;
+      min-height: 65px;
+      align-items: center;
     }
 
     .playing-card {
       background: #ffffff;
       color: #000;
-      width: 36px;
-      height: 52px;
+      width: 40px;
+      height: 58px;
       border-radius: 4px;
       display: flex;
       flex-direction: column;
@@ -247,6 +258,7 @@
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
       border: 1px solid #ccc;
+      flex-shrink: 0;
     }
 
     .playing-card.red { color: #d32f2f; }
@@ -259,15 +271,33 @@
       padding: 12px 0;
       border-bottom: 1px dashed var(--border-color);
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
 
     .asset-info { display: flex; flex-direction: column; }
     .asset-name { font-size: 0.9rem; font-weight: bold; color: var(--text-bright); }
     .asset-rate { font-size: 0.75rem; color: var(--accent-green); }
 
-    .asset-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+    .asset-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
     .btn-sm { padding: 6px 10px; font-size: 0.7rem; width: auto; margin-top: 0; }
+    .input-sm { width: 60px; padding: 6px; margin-top: 0; font-size: 0.75rem; text-align: center; }
+
+    /* Help / Rules Typography */
+    .help-section h3 {
+      color: var(--brand-text);
+      font-size: 0.9rem;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .help-section p, .help-section li {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .help-section ul {
+      padding-left: 18px;
+    }
 
     .console-box {
       background-color: var(--bg-main);
@@ -292,7 +322,10 @@
         <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
       <div>
-        <div class="brand-title">Chris Bridgeforth presents: breadgetters</div>
+        <div class="brand-title">
+          Chris Bridgeforth presents: breadgetters 
+          <span class="version-tag">| v4.8</span>
+        </div>
       </div>
     </div>
 
@@ -313,6 +346,7 @@
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('wealth')">GAMBLING FLOOR</button>
       <button class="tab-btn" onclick="switchTab('assets')">ASSET MARKET</button>
+      <button class="tab-btn" onclick="switchTab('help')">RULES & INFO</button>
       <button class="tab-btn" onclick="switchTab('settings')">BALANCE RESET</button>
     </div>
 
@@ -360,13 +394,34 @@
 
     <!-- TAB 2: Asset Market & Annualized Compounding -->
     <div id="tab-assets" class="tab-content">
-      <div class="stat-label" style="margin-bottom: 8px;">INVESTMENT PORTFOLIO (ANNUALIZED RETURNS)</div>
+      <div class="stat-label" style="margin-bottom: 8px;">INVESTMENT PORTFOLIO (ANNUALIZED RETURNS / PER ANNUM)</div>
       <div id="asset-list">
         <!-- Populated via JS -->
       </div>
     </div>
 
-    <!-- TAB 3: Balance Reset & Config -->
+    <!-- TAB 3: Rules & Info -->
+    <div id="tab-help" class="tab-content">
+      <div class="help-section">
+        <h2 style="color: var(--brand-text); font-size: 1rem; margin-bottom: 8px;">GAME MANUAL & GUIDELINES // v4.8</h2>
+        
+        <h3>1. Telemetry & Peak Net Worth (ATH)</h3>
+        <p>Your Liquid Cash combined with the current market valuation of all owned assets determines your Net Worth. The Peak Net Worth (ATH - All-Time High) records your highest financial milestone achieved during the session.</p>
+
+        <h3>2. Gambling Suite</h3>
+        <p><b>Cyber Coin Flip:</b> Pick Heads or Tails and enter your wager. If correct, you win a 1:1 payout. Watch the 3D coin animation spin and land.</p>
+        <p><b>Blackjack:</b> Compete against the dealer AI. Face cards count as 10, Aces count as 1 or 11. Hit to draw another card or Stand to lock your score. Wins pay out 3:2.</p>
+
+        <h3>3. Asset Market & Compounding (P.A.)</h3>
+        <p><b>P.A. stands for Per Annum</b> (Latin for "per year"). Investment assets appreciate continuously over time based on their annual percentage return rate.</p>
+        <p><b>Granular Controls:</b> You can buy single units, enter a precise quantity in the input field next to an asset to sell that exact amount, or click <b>SELL ALL</b> to instantly liquidate your entire holding for that asset category.</p>
+
+        <h3>4. Balance Reset</h3>
+        <p>Use the Balance Reset tab to fund your terminal with any custom dollar amount whenever you need a fresh start.</p>
+      </div>
+    </div>
+
+    <!-- TAB 4: Balance Reset & Config -->
     <div id="tab-settings" class="tab-content">
       <div class="stat-label">CUSTOM CASH BALANCE RESET</div>
       <input type="number" id="custom-reset-input" class="input-field" value="100" min="0">
@@ -375,7 +430,7 @@
   </div>
 
   <div class="console-box" id="terminal-console">
-[SYSTEM] Chris Bridgeforth presents: breadgetters initialized.
+[SYSTEM] Chris Bridgeforth presents: breadgetters // v4.8 initialized.
 [SYSTEM] Starting balance: $100.00. Ready for execution.
   </div>
 
@@ -384,10 +439,10 @@
     let peakNetWorth = 100.00;
 
     const assets = [
-      { id: 'stocks', name: 'Stocks Pool', rate: 0.08, price: 50.00, units: 0 },
-      { id: 'land', name: 'Land Holdings', rate: 0.07, price: 100.00, units: 0 },
-      { id: 'realestate', name: 'Real Estate', rate: 0.06, price: 250.00, units: 0 },
-      { id: 'metals', name: 'Precious Metals', rate: 0.05, price: 20.00, units: 0 }
+      { id: 'stocks', name: 'Stocks Pool', rate: 0.08, rateLabel: '8% Per Annum (P.A.)', price: 50.00, units: 0 },
+      { id: 'land', name: 'Land Holdings', rate: 0.07, rateLabel: '7% Per Annum (P.A.)', price: 100.00, units: 0 },
+      { id: 'realestate', name: 'Real Estate', rate: 0.06, rateLabel: '6% Per Annum (P.A.)', price: 250.00, units: 0 },
+      { id: 'metals', name: 'Precious Metals', rate: 0.05, rateLabel: '5% Per Annum (P.A.)', price: 20.00, units: 0 }
     ];
 
     function log(msg) {
@@ -482,11 +537,11 @@
         const isRed = ['♥', '♦'].includes(c.suit);
         cardDiv.className = `playing-card ${isRed ? 'red' : ''}`;
         if (hideSecond && idx === 1) {
-          cardDiv.innerHTML = `<span>?</span><span>?</span>`;
-          cardDiv.style.background = '#333';
+          cardDiv.innerHTML = `<span style="font-size:0.75rem;">?</span><span style="font-size:1.1rem; text-align:center;">?</span><span style="font-size:0.75rem; text-align:right;">?</span>`;
+          cardDiv.style.background = '#222';
           cardDiv.style.color = '#fff';
         } else {
-          cardDiv.innerHTML = `<span>${c.val}</span><span style="font-size:1rem; text-align:center;">${c.suit}</span><span style="text-align:right;">${c.val}</span>`;
+          cardDiv.innerHTML = `<span style="font-size:0.75rem; line-height:1;">${c.val}</span><span style="font-size:1.1rem; text-align:center; line-height:1;">${c.suit}</span><span style="font-size:0.75rem; text-align:right; line-height:1;">${c.val}</span>`;
         }
         container.appendChild(cardDiv);
       });
@@ -581,11 +636,12 @@
         row.innerHTML = `
           <div class="asset-info">
             <span class="asset-name">${a.name} (${a.units} Owned)</span>
-            <span class="asset-rate">+${(a.rate * 100).toFixed(0)}% p.a. | Unit Price: $${a.price.toFixed(2)}</span>
+            <span class="asset-rate">+${a.rateLabel} | Price: $${a.price.toFixed(2)}</span>
           </div>
           <div class="asset-controls">
             <button class="btn-action btn-sm" onclick="buyAsset(${idx})">BUY (+$${a.price.toFixed(2)})</button>
-            <button class="btn-action btn-sm" onclick="sellSingleAsset(${idx})">SELL 1</button>
+            <input type="number" id="sell-qty-${idx}" class="input-field input-sm" value="1" min="1" max="${a.units}">
+            <button class="btn-action btn-sm" onclick="sellCustomAsset(${idx})">SELL</button>
             <button class="btn-action btn-sm" onclick="sellAllAsset(${idx})">SELL ALL</button>
           </div>
         `;
@@ -606,17 +662,27 @@
       }
     }
 
-    function sellSingleAsset(idx) {
+    function sellCustomAsset(idx) {
       const a = assets[idx];
-      if (a.units > 0) {
-        a.units -= 1;
-        liquidCash += a.price;
-        log(`MARKET: Sold 1 unit of ${a.name} for $${a.price.toFixed(2)}.`);
-        renderAssets();
-        updateTelemetry();
-      } else {
-        log(`MARKET: You do not own any ${a.name}.`);
+      const qtyInput = document.getElementById(`sell-qty-${idx}`);
+      const qty = parseInt(qtyInput.value);
+
+      if (isNaN(qty) || qty <= 0) {
+        log(`MARKET: Invalid sell quantity for ${a.name}.`);
+        return;
       }
+
+      if (qty > a.units) {
+        log(`MARKET: You only own ${a.units} units of ${a.name}. Cannot sell ${qty}.`);
+        return;
+      }
+
+      a.units -= qty;
+      const totalPayout = qty * a.price;
+      liquidCash += totalPayout;
+      log(`MARKET: Sold ${qty} unit(s) of ${a.name} for $${totalPayout.toFixed(2)}.`);
+      renderAssets();
+      updateTelemetry();
     }
 
     function sellAllAsset(idx) {
@@ -660,3 +726,4 @@
   </script>
 </body>
 </html>
+
