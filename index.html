@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chris Bridgeforth presents: breadgetters // v4.8</title>
+  <title>Chris Bridgeforth presents: breadgetters</title>
   <style>
     :root {
       --bg-main: #050608;
@@ -59,21 +59,24 @@
     }
 
     .brand-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: bold;
       letter-spacing: 1px;
       color: var(--brand-text);
       text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
     }
 
     .version-tag {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-dim);
       font-weight: normal;
+      margin-left: 6px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
     }
 
     .top-telemetry-box {
@@ -132,9 +135,9 @@
       background: transparent;
       border: 1px solid var(--border-color);
       color: var(--text-dim);
-      padding: 8px 14px;
+      padding: 8px 12px;
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
@@ -162,10 +165,21 @@
       border: 1px solid var(--border-color);
       padding: 16px;
       border-radius: 6px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
     }
+
+    .game-hud {
+      display: flex;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+
+    .game-hud span { color: var(--accent-green); font-weight: bold; }
 
     .btn-action {
       background: var(--highlight-bg);
@@ -191,113 +205,120 @@
       background: var(--bg-main);
       border: 1px solid var(--border-color);
       color: var(--text-bright);
-      padding: 10px;
+      padding: 8px 10px;
       border-radius: 4px;
       font-family: var(--font-mono);
       width: 100%;
-      margin-top: 8px;
+      margin-top: 6px;
+      font-size: 0.85rem;
     }
 
-    /* Coin Flip Visual Styles */
-    .coin-display-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 12px 0;
-      min-height: 80px;
-      justify-content: center;
+    .error-msg {
+      font-size: 0.7rem;
+      color: var(--accent-red);
+      margin-top: 4px;
+      min-height: 16px;
+      font-weight: bold;
+    }
+
+    /* Coin Animation */
+    .coin-container {
+      perspective: 1000px;
+      width: 70px;
+      height: 70px;
+      margin: 10px auto;
     }
 
     .coin {
-      width: 60px;
-      height: 60px;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease-in-out;
+    }
+
+    .coin.flip {
+      transform: rotateY(1440deg);
+    }
+
+    .coin-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       background: linear-gradient(135deg, #ffd700, #b8860b);
-      border: 3px solid #fff;
+      border: 2px solid #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
       color: #000;
-      font-size: 0.8rem;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-      transition: transform 0.6s ease;
+      font-size: 0.85rem;
+      backface-visibility: hidden;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
 
-    @keyframes flipCoin {
-      0% { transform: rotateY(0deg) scale(1); }
-      50% { transform: rotateY(720deg) scale(1.2); }
-      100% { transform: rotateY(1440deg) scale(1); }
-    }
-
-    .coin.flipping {
-      animation: flipCoin 0.6s ease-in-out;
-    }
-
-    /* Blackjack Visual Cards - Fixed layout to prevent overlap */
-    .card-container {
+    /* Cards */
+    .cards-area {
       display: flex;
       gap: 8px;
+      margin: 10px 0;
       flex-wrap: wrap;
-      margin: 8px 0;
-      min-height: 65px;
-      align-items: center;
     }
 
     .playing-card {
-      background: #ffffff;
+      background: #fff;
       color: #000;
-      width: 40px;
-      height: 58px;
+      width: 45px;
+      height: 65px;
       border-radius: 4px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 4px;
-      font-size: 0.75rem;
       font-weight: bold;
+      font-size: 0.8rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      border: 1px solid #ccc;
-      flex-shrink: 0;
     }
 
     .playing-card.red { color: #d32f2f; }
+    .playing-card.hidden { background: #1e2638; color: #94a3b8; justify-content: center; align-items: center; }
 
-    /* Asset Market Styles */
+    /* Asset Market Rows */
     .asset-row {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .asset-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px dashed var(--border-color);
-      flex-wrap: wrap;
-      gap: 12px;
+      margin-bottom: 8px;
     }
 
-    .asset-info { display: flex; flex-direction: column; }
     .asset-name { font-size: 0.9rem; font-weight: bold; color: var(--text-bright); }
-    .asset-rate { font-size: 0.75rem; color: var(--accent-green); }
+    .asset-rate { font-size: 0.7rem; color: var(--accent-green); }
 
-    .asset-controls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-    .btn-sm { padding: 6px 10px; font-size: 0.7rem; width: auto; margin-top: 0; }
-    .input-sm { width: 60px; padding: 6px; margin-top: 0; font-size: 0.75rem; text-align: center; }
-
-    /* Help / Rules Typography */
-    .help-section h3 {
-      color: var(--brand-text);
-      font-size: 0.9rem;
-      margin-top: 12px;
-      margin-bottom: 4px;
-      text-transform: uppercase;
+    .asset-controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto auto;
+      gap: 6px;
+      align-items: center;
     }
-    .help-section p, .help-section li {
-      font-size: 0.8rem;
+
+    .btn-sm { padding: 6px 10px; font-size: 0.75rem; width: auto; margin-top: 0; }
+
+    .help-section {
+      font-size: 0.75rem;
       color: var(--text-dim);
-      margin-bottom: 6px;
+      line-height: 1.6;
     }
-    .help-section ul {
-      padding-left: 18px;
-    }
+
+    .help-section h4 { color: var(--brand-text); margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; font-size: 0.8rem; }
 
     .console-box {
       background-color: var(--bg-main);
@@ -322,14 +343,12 @@
         <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
       <div>
-        <div class="brand-title">
-          Chris Bridgeforth presents: breadgetters 
-          <span class="version-tag">| v4.8</span>
-        </div>
+        <div class="brand-title">Chris Bridgeforth presents: breadgetters <span class="version-tag">| v4.9</span></div>
+        <div class="brand-subtitle">FINANCIAL TERMINAL & WEALTH ACCELERATOR</div>
       </div>
     </div>
 
-    <!-- Pinned Top Telemetry: Balance & High Score -->
+    <!-- Telemetry -->
     <div class="top-telemetry-box">
       <div class="stat-pill">
         <div class="stat-label">Liquid Cash</div>
@@ -346,8 +365,8 @@
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('wealth')">GAMBLING FLOOR</button>
       <button class="tab-btn" onclick="switchTab('assets')">ASSET MARKET</button>
-      <button class="tab-btn" onclick="switchTab('help')">RULES & INFO</button>
       <button class="tab-btn" onclick="switchTab('settings')">BALANCE RESET</button>
+      <button class="tab-btn" onclick="switchTab('help')">RULES & INFO</button>
     </div>
 
     <!-- TAB 1: Gambling Suite -->
@@ -355,82 +374,94 @@
       <div class="game-grid">
         <!-- Coin Flip -->
         <div class="game-card">
-          <div>
-            <div class="stat-label">COIN FLIP (1:1 PAYOUT)</div>
-            <div class="coin-display-area">
-              <div id="coin-element" class="coin">$?</div>
+          <div class="game-hud">
+            <div>Available: <span id="cf-hud-cash">$100.00</span></div>
+            <div>Wager: <span id="cf-hud-wager">$10.00</span></div>
+          </div>
+          <div class="stat-label">CYBER COIN FLIP (1:1 PAYOUT)</div>
+          <div class="coin-container">
+            <div class="coin" id="coin-element">
+              <div class="coin-face">$?</div>
             </div>
           </div>
-          <div>
-            <input type="number" id="coin-wager" class="input-field" value="10" min="1">
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('HEADS')">HEADS</button>
-              <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('TAILS')">TAILS</button>
-            </div>
+          <input type="number" id="coin-wager" class="input-field" value="10" min="1" oninput="updateGameHUDs()">
+          <div class="error-msg" id="cf-error"></div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('HEADS')">FLIP HEADS</button>
+            <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('TAILS')">FLIP TAILS</button>
           </div>
         </div>
 
         <!-- Blackjack -->
         <div class="game-card">
-          <div>
-            <div class="stat-label">BLACKJACK (3:2 PAYOUT)</div>
-            <div id="bj-status" style="font-size: 0.75rem; margin: 6px 0; color: var(--text-dim);">Place wager & deal.</div>
-            <div class="stat-label" style="font-size:0.55rem;">DEALER HAND</div>
-            <div id="dealer-cards" class="card-container"></div>
-            <div class="stat-label" style="font-size:0.55rem;">YOUR HAND</div>
-            <div id="player-cards" class="card-container"></div>
+          <div class="game-hud">
+            <div>Available: <span id="bj-hud-cash">$100.00</span></div>
+            <div>Wager: <span id="bj-hud-wager">$25.00</span></div>
           </div>
-          <div>
-            <input type="number" id="bj-wager" class="input-field" value="25" min="1">
-            <div style="display: flex; gap: 6px; margin-top: 10px;">
-              <button class="btn-action btn-sm" id="bj-deal" onclick="startBlackjack()">DEAL</button>
-              <button class="btn-action btn-sm" id="bj-hit" onclick="hitBlackjack()" disabled>HIT</button>
-              <button class="btn-action btn-sm" id="bj-stand" onclick="standBlackjack()" disabled>STAND</button>
-            </div>
+          <div class="stat-label">BLACKJACK (3:2 PAYOUT)</div>
+          <div id="bj-status" style="font-size: 0.75rem; margin: 6px 0; color: var(--text-dim);">Place wager & deal.</div>
+          
+          <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Dealer Hand:</div>
+          <div class="cards-area" id="dealer-cards">
+            <div class="playing-card hidden">?</div>
+          </div>
+
+          <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Your Hand:</div>
+          <div class="cards-area" id="player-cards"></div>
+
+          <input type="number" id="bj-wager" class="input-field" value="25" min="1" oninput="updateGameHUDs()">
+          <div class="error-msg" id="bj-error"></div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <button class="btn-action btn-sm" id="bj-deal" onclick="startBlackjack()">DEAL</button>
+            <button class="btn-action btn-sm" id="bj-hit" onclick="hitBlackjack()" disabled>HIT</button>
+            <button class="btn-action btn-sm" id="bj-stand" onclick="standBlackjack()" disabled>STAND</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 2: Asset Market & Annualized Compounding -->
+    <!-- TAB 2: Asset Market -->
     <div id="tab-assets" class="tab-content">
-      <div class="stat-label" style="margin-bottom: 8px;">INVESTMENT PORTFOLIO (ANNUALIZED RETURNS / PER ANNUM)</div>
-      <div id="asset-list">
-        <!-- Populated via JS -->
-      </div>
+      <div class="stat-label" style="margin-bottom: 10px;">INVESTMENT PORTFOLIO & COMPOUNDING ASSETS</div>
+      <div id="asset-list"></div>
     </div>
 
-    <!-- TAB 3: Rules & Info -->
-    <div id="tab-help" class="tab-content">
-      <div class="help-section">
-        <h2 style="color: var(--brand-text); font-size: 1rem; margin-bottom: 8px;">GAME MANUAL & GUIDELINES // v4.8</h2>
-        
-        <h3>1. Telemetry & Peak Net Worth (ATH)</h3>
-        <p>Your Liquid Cash combined with the current market valuation of all owned assets determines your Net Worth. The Peak Net Worth (ATH - All-Time High) records your highest financial milestone achieved during the session.</p>
-
-        <h3>2. Gambling Suite</h3>
-        <p><b>Cyber Coin Flip:</b> Pick Heads or Tails and enter your wager. If correct, you win a 1:1 payout. Watch the 3D coin animation spin and land.</p>
-        <p><b>Blackjack:</b> Compete against the dealer AI. Face cards count as 10, Aces count as 1 or 11. Hit to draw another card or Stand to lock your score. Wins pay out 3:2.</p>
-
-        <h3>3. Asset Market & Compounding (P.A.)</h3>
-        <p><b>P.A. stands for Per Annum</b> (Latin for "per year"). Investment assets appreciate continuously over time based on their annual percentage return rate.</p>
-        <p><b>Granular Controls:</b> You can buy single units, enter a precise quantity in the input field next to an asset to sell that exact amount, or click <b>SELL ALL</b> to instantly liquidate your entire holding for that asset category.</p>
-
-        <h3>4. Balance Reset</h3>
-        <p>Use the Balance Reset tab to fund your terminal with any custom dollar amount whenever you need a fresh start.</p>
-      </div>
-    </div>
-
-    <!-- TAB 4: Balance Reset & Config -->
+    <!-- TAB 3: Balance Reset -->
     <div id="tab-settings" class="tab-content">
       <div class="stat-label">CUSTOM CASH BALANCE RESET</div>
       <input type="number" id="custom-reset-input" class="input-field" value="100" min="0">
       <button class="btn-action" onclick="executeCustomReset()">APPLY NEW BALANCE</button>
     </div>
+
+    <!-- TAB 4: Rules & Info -->
+    <div id="tab-help" class="tab-content">
+      <div class="stat-label">GAME RULES & SYSTEM DOCUMENTATION</div>
+      <div class="help-section">
+        <h4>Overview</h4>
+        <p>Welcome to <strong>Chris Bridgeforth presents: breadgetters</strong>. Grow your net worth through strategic gambling and long-term asset investments.</p>
+        
+        <h4>Gambling Suite</h4>
+        <p><strong>Coin Flip:</strong> Wager liquid cash on Heads or Tails. Correct guesses double your wager (1:1 payout).</p>
+        <p><strong>Blackjack:</strong> Play against the dealer. Aces count as 1 or 11. Beat the dealer's total without going over 21 to win. Natural blackjacks pay 3:2.</p>
+
+        <h4>Asset Market & P.A.</h4>
+        <p><strong>P.A. (Per Annum):</strong> Means "per year". Assets compound continuously in real-time based on their annual percentage yield:</p>
+        <ul>
+          <li>Stocks Pool: 8% Per Annum</li>
+          <li>Land Holdings: 7% Per Annum</li>
+          <li>Real Estate: 6% Per Annum</li>
+          <li>Precious Metals: 5% Per Annum</li>
+        </ul>
+        <p>You can buy or sell multiple units simultaneously. Selling liquidates units instantly back into your cash balance.</p>
+
+        <h4>Peak Net Worth (ATH)</h4>
+        <p>Your highest recorded combined net worth (Cash + Active Asset Valuation) is permanently tracked in the gold telemetry pill at the top.</p>
+      </div>
+    </div>
   </div>
 
   <div class="console-box" id="terminal-console">
-[SYSTEM] Chris Bridgeforth presents: breadgetters // v4.8 initialized.
+[SYSTEM] Chris Bridgeforth presents: breadgetters v4.9 initialized.
 [SYSTEM] Starting balance: $100.00. Ready for execution.
   </div>
 
@@ -439,10 +470,10 @@
     let peakNetWorth = 100.00;
 
     const assets = [
-      { id: 'stocks', name: 'Stocks Pool', rate: 0.08, rateLabel: '8% Per Annum (P.A.)', price: 50.00, units: 0 },
-      { id: 'land', name: 'Land Holdings', rate: 0.07, rateLabel: '7% Per Annum (P.A.)', price: 100.00, units: 0 },
-      { id: 'realestate', name: 'Real Estate', rate: 0.06, rateLabel: '6% Per Annum (P.A.)', price: 250.00, units: 0 },
-      { id: 'metals', name: 'Precious Metals', rate: 0.05, rateLabel: '5% Per Annum (P.A.)', price: 20.00, units: 0 }
+      { id: 'stocks', name: 'Stocks Pool', rate: 0.08, price: 50.00, units: 0 },
+      { id: 'land', name: 'Land Holdings', rate: 0.07, price: 100.00, units: 0 },
+      { id: 'realestate', name: 'Real Estate', rate: 0.06, price: 250.00, units: 0 },
+      { id: 'metals', name: 'Precious Metals', rate: 0.05, price: 20.00, units: 0 }
     ];
 
     function log(msg) {
@@ -462,6 +493,32 @@
 
       document.getElementById('top-cash').innerText = `$${liquidCash.toFixed(2)}`;
       document.getElementById('top-ath').innerText = `$${peakNetWorth.toFixed(2)}`;
+      updateGameHUDs();
+    }
+
+    function updateGameHUDs() {
+      const cfWager = parseFloat(document.getElementById('coin-wager').value) || 0;
+      const bjWager = parseFloat(document.getElementById('bj-wager').value) || 0;
+
+      document.getElementById('cf-hud-cash').innerText = `$${liquidCash.toFixed(2)}`;
+      document.getElementById('cf-hud-wager').innerText = `$${cfWager.toFixed(2)}`;
+
+      document.getElementById('bj-hud-cash').innerText = `$${liquidCash.toFixed(2)}`;
+      document.getElementById('bj-hud-wager').innerText = `$${bjWager.toFixed(2)}`;
+
+      const cfErr = document.getElementById('cf-error');
+      if (cfWager > liquidCash) {
+        cfErr.innerText = "NOT ENOUGH CASH";
+      } else {
+        cfErr.innerText = "";
+      }
+
+      const bjErr = document.getElementById('bj-error');
+      if (bjWager > liquidCash) {
+        bjErr.innerText = "NOT ENOUGH CASH";
+      } else {
+        bjErr.innerText = "";
+      }
     }
 
     function switchTab(tabId) {
@@ -471,22 +528,24 @@
       document.getElementById(`tab-${tabId}`).classList.add('active');
     }
 
+    // Coin Flip with 3D Animation
     function playCoinFlip(choice) {
       const wager = parseFloat(document.getElementById('coin-wager').value);
-      if (isNaN(wager) || wager <= 0 || wager > liquidCash) {
-        log("COIN FLIP: Invalid or insufficient wager.");
+      if (isNaN(wager) || wager <= 0) {
+        log("COIN FLIP: Invalid wager.");
+        return;
+      }
+      if (wager > liquidCash) {
+        log("COIN FLIP: Not enough cash for wager.");
         return;
       }
 
       const coinEl = document.getElementById('coin-element');
-      coinEl.classList.add('flipping');
-      coinEl.innerText = '...';
+      coinEl.classList.add('flip');
 
       setTimeout(() => {
-        coinEl.classList.remove('flipping');
+        coinEl.classList.remove('flip');
         const result = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
-        coinEl.innerText = result;
-
         if (choice === result) {
           liquidCash += wager;
           log(`COIN FLIP: Landed ${result}. WON $${wager.toFixed(2)}!`);
@@ -495,33 +554,27 @@
           log(`COIN FLIP: Landed ${result}. LOST $${wager.toFixed(2)}.`);
         }
         updateTelemetry();
-      }, 600);
+      }, 800);
     }
 
-    // Blackjack State
-    let bjState = { pot: 0, active: false, playerCards: [], dealerCards: [] };
+    // Blackjack Logic
+    let bjState = { pot: 0, active: false, playerHand: [], dealerHand: [] };
     const suits = ['♠', '♥', '♦', '♣'];
-    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
 
     function getRandomCard() {
-      const suit = suits[Math.floor(Math.random() * suits.length)];
       const val = values[Math.floor(Math.random() * values.length)];
-      return { suit, val };
+      const suit = suits[Math.floor(Math.random() * suits.length)];
+      const isRed = suit === '♥' || suit === '♦';
+      let numericVal = parseInt(val);
+      if (['J', 'Q', 'K'].includes(val)) numericVal = 10;
+      if (val === 'A') numericVal = 11;
+      return { val, suit, isRed, numericVal };
     }
 
-    function getCardVal(card) {
-      if (['J', 'Q', 'K'].includes(card.val)) return 10;
-      if (card.val === 'A') return 11;
-      return parseInt(card.val);
-    }
-
-    function calculateHand(cards) {
-      let sum = 0;
-      let aces = 0;
-      cards.forEach(c => {
-        sum += getCardVal(c);
-        if (c.val === 'A') aces++;
-      });
+    function calculateHand(hand) {
+      let sum = hand.reduce((acc, card) => acc + card.numericVal, 0);
+      let aces = hand.filter(card => card.val === 'A').length;
       while (sum > 21 && aces > 0) {
         sum -= 10;
         aces--;
@@ -529,22 +582,33 @@
       return sum;
     }
 
-    function renderCards(containerId, cards, hideSecond = false) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      cards.forEach((c, idx) => {
-        const cardDiv = document.createElement('div');
-        const isRed = ['♥', '♦'].includes(c.suit);
-        cardDiv.className = `playing-card ${isRed ? 'red' : ''}`;
-        if (hideSecond && idx === 1) {
-          cardDiv.innerHTML = `<span style="font-size:0.75rem;">?</span><span style="font-size:1.1rem; text-align:center;">?</span><span style="font-size:0.75rem; text-align:right;">?</span>`;
-          cardDiv.style.background = '#222';
-          cardDiv.style.color = '#fff';
-        } else {
-          cardDiv.innerHTML = `<span style="font-size:0.75rem; line-height:1;">${c.val}</span><span style="font-size:1.1rem; text-align:center; line-height:1;">${c.suit}</span><span style="font-size:0.75rem; text-align:right; line-height:1;">${c.val}</span>`;
-        }
-        container.appendChild(cardDiv);
+    function renderCards() {
+      const pContainer = document.getElementById('player-cards');
+      pContainer.innerHTML = '';
+      bjState.playerHand.forEach(card => {
+        pContainer.appendChild(createCardElement(card));
       });
+
+      const dContainer = document.getElementById('dealer-cards');
+      dContainer.innerHTML = '';
+      if (bjState.active) {
+        dContainer.appendChild(createCardElement(bjState.dealerHand[0]));
+        const hiddenDiv = document.createElement('div');
+        hiddenDiv.className = 'playing-card hidden';
+        hiddenDiv.innerText = '?';
+        dContainer.appendChild(hiddenDiv);
+      } else {
+        bjState.dealerHand.forEach(card => {
+          dContainer.appendChild(createCardElement(card));
+        });
+      }
+    }
+
+    function createCardElement(card) {
+      const div = document.createElement('div');
+      div.className = `playing-card ${card.isRed ? 'red' : ''}`;
+      div.innerHTML = `<div>${card.val}<br>${card.suit}</div><div style="align-self:flex-end; transform:rotate(180deg);">${card.val}<br>${card.suit}</div>`;
+      return div;
     }
 
     function startBlackjack() {
@@ -556,19 +620,18 @@
       liquidCash -= wager;
       bjState.pot = wager;
       bjState.active = true;
-      bjState.playerCards = [getRandomCard(), getRandomCard()];
-      bjState.dealerCards = [getRandomCard(), getRandomCard()];
+      bjState.playerHand = [getRandomCard(), getRandomCard()];
+      bjState.dealerHand = [getRandomCard(), getRandomCard()];
 
-      renderCards('player-cards', bjState.playerCards);
-      renderCards('dealer-cards', bjState.dealerCards, true);
-
-      document.getElementById('bj-status').innerText = `Hand active! Total: ${calculateHand(bjState.playerCards)}. Choose Hit or Stand.`;
+      renderCards();
+      document.getElementById('bj-status').innerText = `Hand dealt! Total: ${calculateHand(bjState.playerHand)}. Choose Hit or Stand.`;
       document.getElementById('bj-deal').disabled = true;
       document.getElementById('bj-hit').disabled = false;
       document.getElementById('bj-stand').disabled = false;
       updateTelemetry();
+      log(`BLACKJACK: Game started with $${wager} wager.`);
 
-      if (calculateHand(bjState.playerCards) === 21) {
+      if (calculateHand(bjState.playerHand) === 21) {
         log("BLACKJACK: Natural Blackjack!");
         standBlackjack();
       }
@@ -576,44 +639,41 @@
 
     function hitBlackjack() {
       if (!bjState.active) return;
-      bjState.playerCards.push(getRandomCard());
-      renderCards('player-cards', bjState.playerCards);
-      const pSum = calculateHand(bjState.playerCards);
-
-      if (pSum > 21) {
-        log(`BLACKJACK: Bust with ${pSum}! Lost $${bjState.pot}.`);
-        document.getElementById('bj-status').innerText = `Bust! (${pSum})`;
+      bjState.playerHand.push(getRandomCard());
+      renderCards();
+      const pTotal = calculateHand(bjState.playerHand);
+      if (pTotal > 21) {
+        log(`BLACKJACK: Bust! Total ${pTotal}. Lost $${bjState.pot}.`);
+        document.getElementById('bj-status').innerText = `Bust! Total: ${pTotal}. House wins.`;
         endBlackjackHand();
       } else {
-        document.getElementById('bj-status').innerText = `Hit! Current Total: ${pSum}`;
+        document.getElementById('bj-status').innerText = `Hit! Current Total: ${pTotal}.`;
       }
       updateTelemetry();
     }
 
     function standBlackjack() {
       if (!bjState.active) return;
-      renderCards('dealer-cards', bjState.dealerCards, false);
-      let dSum = calculateHand(bjState.dealerCards);
-      let pSum = calculateHand(bjState.playerCards);
-
-      while (dSum < 17) {
-        bjState.dealerCards.push(getRandomCard());
-        renderCards('dealer-cards', bjState.dealerCards, false);
-        dSum = calculateHand(bjState.dealerCards);
+      let dTotal = calculateHand(bjState.dealerHand);
+      while (dTotal < 17) {
+        bjState.dealerHand.push(getRandomCard());
+        dTotal = calculateHand(bjState.dealerHand);
       }
+      renderCards();
 
-      if (dSum > 21 || pSum > dSum) {
-        const payout = bjState.pot * (pSum === 21 && bjState.playerCards.length === 2 ? 2.5 : 2);
-        liquidCash += payout;
-        log(`BLACKJACK: Won! You: ${pSum}, Dealer: ${dSum}. Payout: $${payout.toFixed(2)}.`);
-        document.getElementById('bj-status').innerText = `You won!`;
-      } else if (pSum === dSum) {
-        liquidCash += bjState.pot;
-        log(`BLACKJACK: Push! Tie with ${pSum}. Wager returned.`);
-        document.getElementById('bj-status').innerText = `Push (Tie).`;
+      const pTotal = calculateHand(bjState.playerHand);
+      if (dTotal > 21 || pTotal > dTotal) {
+        const winAmount = bjState.pot * 1.5;
+        liquidCash += bjState.pot + winAmount;
+        log(`BLACKJACK: Won! Payout $${winAmount.toFixed(2)}.`);
+        document.getElementById('bj-status').innerText = `You Win! Player: ${pTotal}, Dealer: ${dTotal}.`;
+      } else if (pTotal < dTotal) {
+        log(`BLACKJACK: Dealer wins with ${dTotal}. Lost $${bjState.pot}.`);
+        document.getElementById('bj-status').innerText = `Dealer wins. Player: ${pTotal}, Dealer: ${dTotal}.`;
       } else {
-        log(`BLACKJACK: Dealer wins. You: ${pSum}, Dealer: ${dSum}. Lost $${bjState.pot}.`);
-        document.getElementById('bj-status').innerText = `Dealer wins.`;
+        liquidCash += bjState.pot;
+        log(`BLACKJACK: Push (Tie). Wager refunded.`);
+        document.getElementById('bj-status').innerText = `Push (Tie). Wager returned.`;
       }
       endBlackjackHand();
       updateTelemetry();
@@ -626,6 +686,7 @@
       document.getElementById('bj-stand').disabled = true;
     }
 
+    // Asset Market with Bulk Buy/Sell & Insufficient Cash Detection
     function renderAssets() {
       const list = document.getElementById('asset-list');
       list.innerHTML = '';
@@ -634,72 +695,61 @@
         const row = document.createElement('div');
         row.className = 'asset-row';
         row.innerHTML = `
-          <div class="asset-info">
-            <span class="asset-name">${a.name} (${a.units} Owned)</span>
-            <span class="asset-rate">+${a.rateLabel} | Price: $${a.price.toFixed(2)}</span>
+          <div class="asset-header">
+            <div>
+              <div class="asset-name">${a.name} (${a.units} Owned)</div>
+              <div class="asset-rate">+${(a.rate * 100).toFixed(0)}% Per Annum | Price: $${a.price.toFixed(2)}</div>
+            </div>
           </div>
-          <div class="asset-controls">
-            <button class="btn-action btn-sm" onclick="buyAsset(${idx})">BUY (+$${a.price.toFixed(2)})</button>
-            <input type="number" id="sell-qty-${idx}" class="input-field input-sm" value="1" min="1" max="${a.units}">
-            <button class="btn-action btn-sm" onclick="sellCustomAsset(${idx})">SELL</button>
-            <button class="btn-action btn-sm" onclick="sellAllAsset(${idx})">SELL ALL</button>
+          <div class="asset-controls-grid">
+            <input type="number" id="buy-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
+            <button class="btn-action btn-sm" onclick="bulkBuy(${idx})">BUY</button>
+            <input type="number" id="sell-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
+            <button class="btn-action btn-sm" onclick="bulkSell(${idx})">SELL</button>
           </div>
         `;
         list.appendChild(row);
       });
     }
 
-    function buyAsset(idx) {
+    function bulkBuy(idx) {
       const a = assets[idx];
-      if (liquidCash >= a.price) {
-        liquidCash -= a.price;
-        a.units += 1;
-        log(`MARKET: Bought 1 unit of ${a.name}.`);
+      const qtyInput = document.getElementById(`buy-qty-${idx}`);
+      const qty = parseInt(qtyInput.value) || 0;
+      if (qty <= 0) return;
+
+      const totalCost = qty * a.price;
+      if (totalCost > liquidCash) {
+        log(`MARKET: NOT ENOUGH CASH to buy ${qty} units of ${a.name}. Required: $${totalCost.toFixed(2)}.`);
+      } else {
+        liquidCash -= totalCost;
+        a.units += qty;
+        log(`MARKET: Purchased ${qty} units of ${a.name} for $${totalCost.toFixed(2)}.`);
         renderAssets();
         updateTelemetry();
-      } else {
-        log("MARKET: Insufficient liquid cash.");
       }
     }
 
-    function sellCustomAsset(idx) {
+    function bulkSell(idx) {
       const a = assets[idx];
       const qtyInput = document.getElementById(`sell-qty-${idx}`);
-      const qty = parseInt(qtyInput.value);
+      const qty = parseInt(qtyInput.value) || 0;
+      if (qty <= 0) return;
 
-      if (isNaN(qty) || qty <= 0) {
-        log(`MARKET: Invalid sell quantity for ${a.name}.`);
-        return;
-      }
-
-      if (qty > a.units) {
-        log(`MARKET: You only own ${a.units} units of ${a.name}. Cannot sell ${qty}.`);
-        return;
-      }
-
-      a.units -= qty;
-      const totalPayout = qty * a.price;
-      liquidCash += totalPayout;
-      log(`MARKET: Sold ${qty} unit(s) of ${a.name} for $${totalPayout.toFixed(2)}.`);
-      renderAssets();
-      updateTelemetry();
-    }
-
-    function sellAllAsset(idx) {
-      const a = assets[idx];
-      if (a.units > 0) {
-        const totalPayout = a.units * a.price;
-        log(`MARKET: Sold all ${a.units} units of ${a.name} for $${totalPayout.toFixed(2)}.`);
-        liquidCash += totalPayout;
-        a.units = 0;
+      const sellQty = Math.min(qty, a.units);
+      if (sellQty > 0) {
+        const totalReturn = sellQty * a.price;
+        a.units -= sellQty;
+        liquidCash += totalReturn;
+        log(`MARKET: Sold ${sellQty} units of ${a.name} for $${totalReturn.toFixed(2)}.`);
         renderAssets();
         updateTelemetry();
       } else {
-        log(`MARKET: No units to sell for ${a.name}.`);
+        log(`MARKET: You do not own any units of ${a.name} to sell.`);
       }
     }
 
-    // Annualized compounding growth simulation loop
+    // Compounding growth simulation loop
     setInterval(() => {
       assets.forEach(a => {
         if (a.units > 0) {
@@ -726,4 +776,5 @@
   </script>
 </body>
 </html>
+
 
