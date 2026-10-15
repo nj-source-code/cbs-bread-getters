@@ -1,900 +1,952 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chris Bridgeforth presents: breadgetters v5.0</title>
-  <style>
-    :root {
-      --bg-main: #050608;
-      --bg-card: #0a0d12;
-      --bg-card-hover: #121720;
-      --border-color: #1e2638;
-      --border-accent: #00f0ff;
-      --text-main: #e2e8f0;
-      --text-dim: #94a3b8;
-      --text-bright: #ffffff;
-      --brand-text: #00f0ff;
-      --accent-gold: #ffd700;
-      --accent-red: #ff4d4d;
-      --accent-green: #00ff88;
-      --highlight-bg: #0f172a;
-      --font-mono: 'Courier New', Courier, monospace;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chris Bridgeforth presents: breadgetters | v5.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #080b11;
+            --card-bg: #0f172a;
+            --accent-cyan: #00f0ff;
+            --accent-green: #00ff88;
+            --accent-red: #ff3366;
+            --accent-gold: #ffd700;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f1f5f9;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      font-family: var(--font-mono);
-      font-size: 14px;
-      line-height: 1.5;
-      padding: 12px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 12px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+        /* Coin Styles */
+        .coin-container {
+            perspective: 1000px;
+        }
 
-    .brand-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+        .coin {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.5);
+        }
 
-    .bread-svg-icon {
-      width: 40px;
-      height: 40px;
-      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
-    }
+        .coin.flipping {
+            animation: flipAnim 1.2s ease-in-out forwards;
+        }
 
-    .brand-title {
-      font-size: 0.95rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: var(--brand-text);
-      text-transform: uppercase;
-    }
+        @keyframes flipAnim {
+            0% { transform: rotateY(0) scale(1); }
+            50% { transform: rotateY(1080deg) scale(1.25); }
+            100% { transform: rotateY(2160deg) scale(1); }
+        }
 
-    .version-tag {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      font-weight: normal;
-      margin-left: 6px;
-    }
+        .coin-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #ffd700;
+            background: radial-gradient(circle at 30% 30%, #ffe875, #c79100);
+            color: #1a1000;
+            font-weight: 800;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+        }
 
-    .brand-subtitle {
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-    }
+        .coin-back {
+            transform: rotateY(180deg);
+            background: radial-gradient(circle at 30% 30%, #fff0a0, #9e7200);
+        }
 
-    .top-telemetry-box {
-      display: flex;
-      gap: 10px;
-    }
+        /* Playing Cards Layout & Fixed Heights */
+        .playing-card {
+            width: 76px;
+            height: 108px;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #0f172a;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 6px;
+            box-sizing: border-box;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
 
-    .stat-pill {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      padding: 8px 14px;
-      border-radius: 6px;
-      text-align: right;
-    }
+        .playing-card.red { color: #dc2626; }
+        .playing-card.black { color: #0f172a; }
 
-    .stat-label {
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+        .playing-card .card-corner {
+            line-height: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-weight: 800;
+            font-size: 13px;
+        }
 
-    .stat-value {
-      font-size: 1rem;
-      font-weight: bold;
-      color: var(--accent-green);
-    }
+        .playing-card .card-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 26px;
+            font-weight: bold;
+            pointer-events: none;
+            line-height: 1;
+        }
 
-    .stat-value.gold {
-      color: var(--accent-gold);
-      background: rgba(255, 215, 0, 0.08);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-    }
+        .playing-card-back {
+            width: 76px;
+            height: 108px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1e293b 25%, #0f172a 100%);
+            border: 2px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
 
-    .terminal-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
 
-    .nav-tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-dim);
-      padding: 8px 12px;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .tab-btn.active {
-      background: var(--highlight-bg);
-      border-color: var(--border-accent);
-      color: var(--brand-text);
-      box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .game-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
-    }
-
-    .game-card {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      padding: 16px;
-      border-radius: 6px;
-    }
-
-    .game-hud {
-      display: flex;
-      justify-content: space-between;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-bottom: 10px;
-    }
-
-    .game-hud span { color: var(--accent-green); font-weight: bold; }
-
-    .btn-action {
-      background: var(--highlight-bg);
-      color: var(--text-bright);
-      border: 1px solid var(--border-accent);
-      padding: 10px 16px;
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.2s;
-      width: 100%;
-      touch-action: manipulation;
-    }
-
-    .btn-action:hover {
-      background: var(--border-accent);
-      color: #000;
-    }
-
-    .btn-action:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .input-field {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      color: var(--text-bright);
-      padding: 10px 12px;
-      border-radius: 4px;
-      font-family: var(--font-mono);
-      width: 100%;
-      margin-top: 6px;
-      font-size: 0.9rem;
-      -webkit-appearance: none;
-    }
-
-    .input-field:focus {
-      border-color: var(--border-accent);
-      outline: none;
-      box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
-    }
-
-    .error-msg {
-      font-size: 0.7rem;
-      color: var(--accent-red);
-      margin-top: 4px;
-      min-height: 16px;
-      font-weight: bold;
-    }
-
-    /* Coin Animation */
-    .coin-container {
-      perspective: 1000px;
-      width: 70px;
-      height: 70px;
-      margin: 10px auto;
-    }
-
-    .coin {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.8s ease-in-out;
-    }
-
-    .coin.flip {
-      transform: rotateY(1440deg);
-    }
-
-    .coin-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ffd700, #b8860b);
-      border: 2px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #000;
-      font-size: 0.85rem;
-      backface-visibility: hidden;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    }
-
-    /* Cards */
-    .cards-area {
-      display: flex;
-      gap: 8px;
-      margin: 10px 0;
-      flex-wrap: wrap;
-    }
-
-    .playing-card {
-      background: #fff;
-      color: #000;
-      width: 45px;
-      height: 65px;
-      border-radius: 4px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 4px;
-      font-weight: bold;
-      font-size: 0.8rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    }
-
-    .playing-card.red { color: #d32f2f; }
-    .playing-card.hidden { background: #1e2638; color: #94a3b8; justify-content: center; align-items: center; }
-
-    /* Asset Market Layout */
-    .asset-row {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      padding: 14px;
-      border-radius: 8px;
-      margin-bottom: 14px;
-    }
-
-    .asset-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 8px;
-    }
-
-    .asset-name { font-size: 0.95rem; font-weight: bold; color: var(--text-bright); }
-    .asset-rate { font-size: 0.7rem; color: var(--accent-green); }
-
-    .asset-trade-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .trade-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 10px;
-    }
-
-    .trade-box-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-
-    .trade-input-group {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .btn-sm { 
-      padding: 8px 14px; 
-      font-size: 0.75rem; 
-      width: auto; 
-      margin-top: 0;
-      white-space: nowrap;
-    }
-
-    .calc-preview {
-      font-size: 0.7rem;
-      color: var(--accent-green);
-      margin-top: 4px;
-    }
-
-    .calc-preview.error {
-      color: var(--accent-red);
-      font-weight: bold;
-    }
-
-    .help-section {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    .help-section h4 { color: var(--brand-text); margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; font-size: 0.8rem; }
-
-    .console-box {
-      background-color: var(--bg-main);
-      border: 1px dashed var(--border-color);
-      border-radius: 4px;
-      padding: 10px;
-      font-size: 0.75rem;
-      color: var(--accent-green);
-      height: 90px;
-      overflow-y: auto;
-      margin-top: 14px;
-      white-space: pre-wrap;
-    }
-  </style>
+        .glow-green { box-shadow: 0 0 15px rgba(0, 255, 136, 0.25); }
+        .glow-red { box-shadow: 0 0 15px rgba(255, 51, 102, 0.25); }
+        .glow-cyan { box-shadow: 0 0 15px rgba(0, 240, 255, 0.25); }
+        .glow-gold { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between antialiased pb-10">
 
-  <header>
-    <div class="brand-container">
-      <svg class="bread-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 28C12 16 20 10 32 10C44 10 52 16 52 28C55 35 53 50 47 50H17C11 50 9 35 12 28Z" fill="#0a0d12" stroke="#00f0ff" stroke-width="3"/>
-        <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
-      </svg>
-      <div>
-        <div class="brand-title">Chris Bridgeforth presents: breadgetters <span class="version-tag">| v5.0</span></div>
-        <div class="brand-subtitle">FINANCIAL TERMINAL & WEALTH ACCELERATOR</div>
-      </div>
-    </div>
+    <!-- PERMANENT TOP TELEMETRY BAR -->
+    <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-2xl px-3 py-2.5">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+            
+            <!-- Branding & Title -->
+            <div class="flex items-center gap-2.5 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-2">
+                    <!-- SVG Bread Loaf Icon -->
+                    <div class="p-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                        <svg class="w-6 h-6 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 12C3 8.13401 6.13401 5 10 5H14C17.866 5 21 8.13401 21 12C21 13.5 20.5 15 19.5 16.5C18.2 18.5 15.8 20 12 20C8.2 20 5.8 18.5 4.5 16.5C3.5 15 3 13.5 3 12Z" opacity="0.3"/>
+                            <path d="M3 11.5C3 8.46243 5.46243 6 8.5 6H15.5C18.5376 6 21 8.46243 21 11.5C21 13 20.2 14.8 19 16.2C17.5 18 15 19 12 19C9 19 6.5 18 5 16.2C3.8 14.8 3 13 3 11.5Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M7.5 9.5L9.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M11.5 9.5L13.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M15.5 9.5L17.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xs text-slate-400 font-semibold tracking-wide uppercase">Chris Bridgeforth presents</h1>
+                        <div class="flex items-center gap-2">
+                            <span class="text-base font-extrabold tracking-tight text-white">breadgetters</span>
+                            <span class="text-xs px-1.5 py-0.5 bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 rounded mono" id="versionBadge">v5.1</span>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Telemetry -->
-    <div class="top-telemetry-box">
-      <div class="stat-pill">
-        <div class="stat-label">Liquid Cash</div>
-        <div class="stat-value" id="top-cash">$100.00</div>
-      </div>
-      <div class="stat-pill">
-        <div class="stat-label">Peak Net Worth (ATH)</div>
-        <div class="stat-value gold" id="top-ath">$100.00</div>
-      </div>
-    </div>
-  </header>
-
-  <div class="terminal-card">
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('wealth')">GAMBLING FLOOR</button>
-      <button class="tab-btn" onclick="switchTab('assets')">ASSET MARKET</button>
-      <button class="tab-btn" onclick="switchTab('settings')">BALANCE RESET</button>
-      <button class="tab-btn" onclick="switchTab('help')">RULES & INFO</button>
-    </div>
-
-    <!-- TAB 1: Gambling Suite -->
-    <div id="tab-wealth" class="tab-content active">
-      <div class="game-grid">
-        <!-- Coin Flip -->
-        <div class="game-card">
-          <div class="game-hud">
-            <div>Available: <span id="cf-hud-cash">$100.00</span></div>
-            <div>Wager: <span id="cf-hud-wager">$10.00</span></div>
-          </div>
-          <div class="stat-label">CYBER COIN FLIP (1:1 PAYOUT)</div>
-          <div class="coin-container">
-            <div class="coin" id="coin-element">
-              <div class="coin-face">$?</div>
+                <!-- Reset Button -->
+                <button onclick="resetGame()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Reset
+                </button>
             </div>
-          </div>
-          <input type="number" id="coin-wager" class="input-field" value="10" min="1" step="any" oninput="updateGameHUDs()">
-          <div class="error-msg" id="cf-error"></div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('HEADS')">FLIP HEADS</button>
-            <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('TAILS')">FLIP TAILS</button>
-          </div>
+
+            <!-- Global Financial Metrics -->
+            <div class="grid grid-cols-3 gap-2 w-full md:w-auto">
+                <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2 text-center min-w-[100px]">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Liquid Cash</div>
+                    <div class="text-sm font-extrabold text-emerald-400 mono" id="topCash">$0.00</div>
+                </div>
+                <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2 text-center min-w-[110px]">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Net Worth</div>
+                    <div class="text-sm font-extrabold text-cyan-400 mono" id="topNetWorth">$0.00</div>
+                </div>
+                <div class="bg-amber-950/30 border border-amber-500/40 rounded-lg p-2 text-center min-w-[110px] glow-gold">
+                    <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider flex items-center justify-center gap-1">
+                        <span>🏆 ATH</span>
+                    </div>
+                    <div class="text-sm font-extrabold text-amber-300 mono" id="topPeakNetWorth">$0.00</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Blackjack -->
-        <div class="game-card">
-          <div class="game-hud">
-            <div>Available: <span id="bj-hud-cash">$100.00</span></div>
-            <div>Wager: <span id="bj-hud-wager">$25.00</span></div>
-          </div>
-          <div class="stat-label">BLACKJACK (3:2 PAYOUT)</div>
-          <div id="bj-status" style="font-size: 0.75rem; margin: 6px 0; color: var(--text-dim);">Place wager & deal.</div>
-          
-          <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Dealer Hand:</div>
-          <div class="cards-area" id="dealer-cards">
-            <div class="playing-card hidden">?</div>
-          </div>
-
-          <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Your Hand:</div>
-          <div class="cards-area" id="player-cards"></div>
-
-          <input type="number" id="bj-wager" class="input-field" value="25" min="1" step="any" oninput="updateGameHUDs()">
-          <div class="error-msg" id="bj-error"></div>
-          <div style="display: flex; gap: 6px; margin-top: 8px;">
-            <button class="btn-action btn-sm" id="bj-deal" onclick="startBlackjack()">DEAL</button>
-            <button class="btn-action btn-sm" id="bj-hit" onclick="hitBlackjack()" disabled>HIT</button>
-            <button class="btn-action btn-sm" id="bj-stand" onclick="standBlackjack()" disabled>STAND</button>
-          </div>
+        <!-- Owned Asset Pills Bar -->
+        <div class="max-w-5xl mx-auto mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs overflow-x-auto gap-2 scrollbar-none">
+            <span class="text-slate-400 font-bold uppercase text-[10px] whitespace-nowrap">Assets Owned:</span>
+            <div class="flex items-center gap-1.5" id="ownedAssetsPills">
+                <!-- Dynamic Asset Pills injected here -->
+            </div>
         </div>
-      </div>
-    </div>
+    </header>
 
-    <!-- TAB 2: Asset Market -->
-    <div id="tab-assets" class="tab-content">
-      <div class="stat-label" style="margin-bottom: 10px;">INVESTMENT PORTFOLIO & COMPOUNDING ASSETS</div>
-      <div id="asset-list"></div>
-    </div>
+    <!-- MAIN GAME AREA -->
+    <main class="max-w-5xl mx-auto px-3 py-4 space-y-5 w-full flex-grow">
 
-    <!-- TAB 3: Balance Reset -->
-    <div id="tab-settings" class="tab-content">
-      <div class="stat-label">CUSTOM CASH BALANCE RESET</div>
-      <input type="number" id="custom-reset-input" class="input-field" value="100" min="0">
-      <button class="btn-action" onclick="executeCustomReset()">APPLY NEW BALANCE</button>
-    </div>
+        <!-- GAMES GRID SECTION -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-    <!-- TAB 4: Rules & Info -->
-    <div id="tab-help" class="tab-content">
-      <div class="stat-label">GAME RULES & SYSTEM DOCUMENTATION</div>
-      <div class="help-section">
-        <h4>Overview</h4>
-        <p>Welcome to <strong>Chris Bridgeforth presents: breadgetters</strong>. Grow your net worth through strategic gambling and long-term asset investments.</p>
-        
-        <h4>Gambling Suite</h4>
-        <p><strong>Coin Flip:</strong> Wager liquid cash on Heads or Tails. Correct guesses double your wager (1:1 payout).</p>
-        <p><strong>Blackjack:</strong> Play against the dealer. Aces count as 1 or 11. Beat the dealer's total without going over 21 to win. Natural blackjacks pay 3:2.</p>
+            <!-- 1. CYBER COIN FLIP -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🪙</span>
+                        <div>
+                            <h2 class="font-extrabold text-white text-sm">CYBER COIN FLIP</h2>
+                            <p class="text-[10px] text-slate-400">1:1 Payout • 50/50 Probability</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700 font-semibold">Mini-Game</span>
+                </div>
 
-        <h4>Asset Market & P.A.</h4>
-        <p><strong>P.A. (Per Annum):</strong> Means "per year". Assets compound continuously in real-time based on their annual percentage yield:</p>
-        <ul>
-          <li>Stocks Pool: 8% Per Annum</li>
-          <li>Land Holdings: 7% Per Annum</li>
-          <li>Real Estate: 6% Per Annum</li>
-          <li>Precious Metals: 5% Per Annum</li>
-        </ul>
-        <p>Type in any desired purchase quantity. The system automatically calculates total cost prior to purchase and gives instant cash alerts.</p>
+                <!-- Coin Flip HUD Telemetry Banner -->
+                <div class="my-3 bg-slate-950/70 rounded-xl p-2.5 border border-slate-800/80 space-y-1.5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Available Cash:</span>
+                        <span class="font-bold text-emerald-400 mono" id="coinHudCash">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Active Wager:</span>
+                        <span class="font-bold text-cyan-400 mono" id="coinHudWager">$10.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs border-t border-slate-800/60 pt-1">
+                        <span class="text-slate-400">Overall Net Worth:</span>
+                        <span class="font-bold text-slate-200 mono" id="coinHudNetWorth">$0.00</span>
+                    </div>
+                </div>
 
-        <h4>Peak Net Worth (ATH)</h4>
-        <p>Your highest recorded combined net worth (Cash + Active Asset Valuation) is permanently tracked in the gold telemetry pill at the top.</p>
-      </div>
-    </div>
-  </div>
+                <!-- Coin Visual Display Area -->
+                <div class="flex flex-col items-center justify-center my-3 py-2 space-y-3">
+                    <div class="coin-container">
+                        <div class="coin" id="coinElement">
+                            <div class="coin-face">
+                                <span class="text-xs font-black uppercase text-amber-900 tracking-wider">HEADS</span>
+                                <span class="text-2xl mt-0.5">🪙</span>
+                            </div>
+                            <div class="coin-face coin-back">
+                                <span class="text-xs font-black uppercase text-amber-950 tracking-wider">TAILS</span>
+                                <span class="text-2xl mt-0.5">⚡</span>
+                            </div>
+                        </div>
+                    </div>
 
-  <div class="console-box" id="terminal-console">
-[SYSTEM] Chris Bridgeforth presents: breadgetters v5.0 initialized.
-[SYSTEM] Starting balance: $100.00. Interactive asset controls calibrated.
-  </div>
+                    <!-- Result Banner Output -->
+                    <div id="coinResultBox" class="min-h-[42px] w-full flex items-center justify-center">
+                        <div class="text-center text-xs text-slate-400 font-medium px-3 py-1.5 rounded-lg bg-slate-950/40 border border-slate-800/50 w-full">
+                            Select bet size & choose Heads or Tails to flip.
+                        </div>
+                    </div>
+                </div>
 
-  <script>
-    let liquidCash = 100.00;
-    let peakNetWorth = 100.00;
+                <!-- Wager & Controls -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[11px] text-slate-400 font-bold uppercase mb-1 block">Wager Amount ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-slate-500 font-bold">$</span>
+                            <input type="number" id="coinWagerInput" value="10" min="1" step="5"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-7 pr-16 text-sm text-white font-bold mono focus:outline-none focus:border-cyan-500 transition"
+                                oninput="updateCoinWagerHud()">
+                            <div class="absolute right-1 top-1 flex gap-1">
+                                <button onclick="setCoinWager('half')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded font-bold">1/2</button>
+                                <button onclick="setCoinWager('double')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded font-bold">2X</button>
+                                <button onclick="setCoinWager('max')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-cyan-400 px-2 py-1.5 rounded font-bold">MAX</button>
+                            </div>
+                        </div>
+                    </div>
 
-    const assets = [
-      { id: 'stocks', name: 'Stocks Pool', rate: 0.08, price: 50.00, units: 0 },
-      { id: 'land', name: 'Land Holdings', rate: 0.07, price: 100.00, units: 0 },
-      { id: 'realestate', name: 'Real Estate', rate: 0.06, price: 250.00, units: 0 },
-      { id: 'metals', name: 'Precious Metals', rate: 0.05, price: 20.00, units: 0 }
-    ];
-
-    function log(msg) {
-      const consoleBox = document.getElementById('terminal-console');
-      const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-      consoleBox.innerText += `\n[${time}] ${msg}`;
-      consoleBox.scrollTop = consoleBox.scrollHeight;
-    }
-
-    function updateTelemetry() {
-      let portfolioVal = assets.reduce((sum, a) => sum + (a.units * a.price), 0);
-      let netWorth = liquidCash + portfolioVal;
-
-      if (netWorth > peakNetWorth) {
-        peakNetWorth = netWorth;
-      }
-
-      document.getElementById('top-cash').innerText = `$${liquidCash.toFixed(2)}`;
-      document.getElementById('top-ath').innerText = `$${peakNetWorth.toFixed(2)}`;
-      updateGameHUDs();
-      updateAssetCalculations();
-    }
-
-    function updateGameHUDs() {
-      const cfWager = parseFloat(document.getElementById('coin-wager').value) || 0;
-      const bjWager = parseFloat(document.getElementById('bj-wager').value) || 0;
-
-      document.getElementById('cf-hud-cash').innerText = `$${liquidCash.toFixed(2)}`;
-      document.getElementById('cf-hud-wager').innerText = `$${cfWager.toFixed(2)}`;
-
-      document.getElementById('bj-hud-cash').innerText = `$${liquidCash.toFixed(2)}`;
-      document.getElementById('bj-hud-wager').innerText = `$${bjWager.toFixed(2)}`;
-
-      const cfErr = document.getElementById('cf-error');
-      if (cfWager > liquidCash) {
-        cfErr.innerText = "NOT ENOUGH CASH";
-      } else {
-        cfErr.innerText = "";
-      }
-
-      const bjErr = document.getElementById('bj-error');
-      if (bjWager > liquidCash) {
-        bjErr.innerText = "NOT ENOUGH CASH";
-      } else {
-        bjErr.innerText = "";
-      }
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-    }
-
-    // Coin Flip
-    function playCoinFlip(choice) {
-      const wager = parseFloat(document.getElementById('coin-wager').value);
-      if (isNaN(wager) || wager <= 0) {
-        log("COIN FLIP: Invalid wager.");
-        return;
-      }
-      if (wager > liquidCash) {
-        log("COIN FLIP: NOT ENOUGH CASH.");
-        return;
-      }
-
-      const coinEl = document.getElementById('coin-element');
-      coinEl.classList.add('flip');
-
-      setTimeout(() => {
-        coinEl.classList.remove('flip');
-        const result = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
-        if (choice === result) {
-          liquidCash += wager;
-          log(`COIN FLIP: Landed ${result}. WON $${wager.toFixed(2)}!`);
-        } else {
-          liquidCash -= wager;
-          log(`COIN FLIP: Landed ${result}. LOST $${wager.toFixed(2)}.`);
-        }
-        updateTelemetry();
-      }, 800);
-    }
-
-    // Blackjack Logic
-    let bjState = { pot: 0, active: false, playerHand: [], dealerHand: [] };
-    const suits = ['♠', '♥', '♦', '♣'];
-    const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-
-    function getRandomCard() {
-      const val = values[Math.floor(Math.random() * values.length)];
-      const suit = suits[Math.floor(Math.random() * suits.length)];
-      const isRed = suit === '♥' || suit === '♦';
-      let numericVal = parseInt(val);
-      if (['J', 'Q', 'K'].includes(val)) numericVal = 10;
-      if (val === 'A') numericVal = 11;
-      return { val, suit, isRed, numericVal };
-    }
-
-    function calculateHand(hand) {
-      let sum = hand.reduce((acc, card) => acc + card.numericVal, 0);
-      let aces = hand.filter(card => card.val === 'A').length;
-      while (sum > 21 && aces > 0) {
-        sum -= 10;
-        aces--;
-      }
-      return sum;
-    }
-
-    function renderCards() {
-      const pContainer = document.getElementById('player-cards');
-      pContainer.innerHTML = '';
-      bjState.playerHand.forEach(card => {
-        pContainer.appendChild(createCardElement(card));
-      });
-
-      const dContainer = document.getElementById('dealer-cards');
-      dContainer.innerHTML = '';
-      if (bjState.active) {
-        dContainer.appendChild(createCardElement(bjState.dealerHand[0]));
-        const hiddenDiv = document.createElement('div');
-        hiddenDiv.className = 'playing-card hidden';
-        hiddenDiv.innerText = '?';
-        dContainer.appendChild(hiddenDiv);
-      } else {
-        bjState.dealerHand.forEach(card => {
-          dContainer.appendChild(createCardElement(card));
-        });
-      }
-    }
-
-    function createCardElement(card) {
-      const div = document.createElement('div');
-      div.className = `playing-card ${card.isRed ? 'red' : ''}`;
-      div.innerHTML = `<div>${card.val}<br>${card.suit}</div><div style="align-self:flex-end; transform:rotate(180deg);">${card.val}<br>${card.suit}</div>`;
-      return div;
-    }
-
-    function startBlackjack() {
-      const wager = parseFloat(document.getElementById('bj-wager').value);
-      if (isNaN(wager) || wager <= 0 || wager > liquidCash) {
-        log("BLACKJACK: Invalid or insufficient wager.");
-        return;
-      }
-      liquidCash -= wager;
-      bjState.pot = wager;
-      bjState.active = true;
-      bjState.playerHand = [getRandomCard(), getRandomCard()];
-      bjState.dealerHand = [getRandomCard(), getRandomCard()];
-
-      renderCards();
-      document.getElementById('bj-status').innerText = `Hand dealt! Total: ${calculateHand(bjState.playerHand)}. Choose Hit or Stand.`;
-      document.getElementById('bj-deal').disabled = true;
-      document.getElementById('bj-hit').disabled = false;
-      document.getElementById('bj-stand').disabled = false;
-      updateTelemetry();
-      log(`BLACKJACK: Game started with $${wager.toFixed(2)} wager.`);
-
-      if (calculateHand(bjState.playerHand) === 21) {
-        log("BLACKJACK: Natural Blackjack!");
-        standBlackjack();
-      }
-    }
-
-    function hitBlackjack() {
-      if (!bjState.active) return;
-      bjState.playerHand.push(getRandomCard());
-      renderCards();
-      const pTotal = calculateHand(bjState.playerHand);
-      if (pTotal > 21) {
-        log(`BLACKJACK: Bust! Total ${pTotal}. Lost $${bjState.pot.toFixed(2)}.`);
-        document.getElementById('bj-status').innerText = `Bust! Total: ${pTotal}. House wins.`;
-        endBlackjackHand();
-      } else {
-        document.getElementById('bj-status').innerText = `Hit! Current Total: ${pTotal}.`;
-      }
-      updateTelemetry();
-    }
-
-    function standBlackjack() {
-      if (!bjState.active) return;
-      let dTotal = calculateHand(bjState.dealerHand);
-      while (dTotal < 17) {
-        bjState.dealerHand.push(getRandomCard());
-        dTotal = calculateHand(bjState.dealerHand);
-      }
-      renderCards();
-
-      const pTotal = calculateHand(bjState.playerHand);
-      if (dTotal > 21 || pTotal > dTotal) {
-        const winAmount = bjState.pot * 1.5;
-        liquidCash += bjState.pot + winAmount;
-        log(`BLACKJACK: Won! Payout $${winAmount.toFixed(2)}.`);
-        document.getElementById('bj-status').innerText = `You Win! Player: ${pTotal}, Dealer: ${dTotal}.`;
-      } else if (pTotal < dTotal) {
-        log(`BLACKJACK: Dealer wins with ${dTotal}. Lost $${bjState.pot.toFixed(2)}.`);
-        document.getElementById('bj-status').innerText = `Dealer wins. Player: ${pTotal}, Dealer: ${dTotal}.`;
-      } else {
-        liquidCash += bjState.pot;
-        log(`BLACKJACK: Push (Tie). Wager refunded.`);
-        document.getElementById('bj-status').innerText = `Push (Tie). Wager returned.`;
-      }
-      endBlackjackHand();
-      updateTelemetry();
-    }
-
-    function endBlackjackHand() {
-      bjState.active = false;
-      document.getElementById('bj-deal').disabled = false;
-      document.getElementById('bj-hit').disabled = true;
-      document.getElementById('bj-stand').disabled = true;
-    }
-
-    // Asset Market Setup & Updating Without Destroying Inputs
-    function initAssetDOM() {
-      const list = document.getElementById('asset-list');
-      list.innerHTML = '';
-
-      assets.forEach((a, idx) => {
-        const row = document.createElement('div');
-        row.className = 'asset-row';
-        row.innerHTML = `
-          <div class="asset-header">
-            <div>
-              <div class="asset-name" id="asset-title-${idx}">${a.name} (<span id="asset-units-${idx}">0</span> Owned)</div>
-              <div class="asset-rate">+${(a.rate * 100).toFixed(0)}% Per Annum | Price: <span id="asset-price-${idx}">$${a.price.toFixed(2)}</span></div>
-            </div>
-          </div>
-          <div class="asset-trade-container">
-            <!-- BUY SECTION -->
-            <div class="trade-box">
-              <div class="trade-box-header">
-                <span>PURCHASE ASSETS</span>
-                <span id="buy-preview-${idx}" class="calc-preview">Est. Total: $0.00</span>
-              </div>
-              <div class="trade-input-group">
-                <input type="number" id="buy-qty-${idx}" class="input-field" placeholder="Units to buy" value="1" min="1" step="1" oninput="updateAssetCalculations()">
-                <button class="btn-action btn-sm" onclick="bulkBuy(${idx})">BUY</button>
-              </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button onclick="playCoinFlip('HEADS')" id="btnHeads" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg active:scale-95">
+                            FLIP HEADS
+                        </button>
+                        <button onclick="playCoinFlip('TAILS')" id="btnTails" class="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-400 hover:to-indigo-500 text-white font-black rounded-xl text-xs uppercase tracking-wider transition shadow-lg active:scale-95">
+                            FLIP TAILS
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- SELL SECTION -->
-            <div class="trade-box">
-              <div class="trade-box-header">
-                <span>LIQUIDATE ASSETS</span>
-                <span id="sell-preview-${idx}" class="calc-preview">Est. Return: $0.00</span>
-              </div>
-              <div class="trade-input-group">
-                <input type="number" id="sell-qty-${idx}" class="input-field" placeholder="Units to sell" value="1" min="1" step="1" oninput="updateAssetCalculations()">
-                <button class="btn-action btn-sm" onclick="bulkSell(${idx})">SELL</button>
-                <button class="btn-action btn-sm" style="background:#221526; border-color:#ff4d4d;" onclick="sellAll(${idx})">SELL ALL</button>
-              </div>
+            <!-- 2. CYBER BLACKJACK -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🃏</span>
+                        <div>
+                            <h2 class="font-extrabold text-white text-sm">CYBER BLACKJACK</h2>
+                            <p class="text-[10px] text-slate-400">3:2 Blackjack Payout • Dealer Stands on 17</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700 font-semibold">Table Game</span>
+                </div>
+
+                <!-- Blackjack HUD Telemetry Banner -->
+                <div class="my-3 bg-slate-950/70 rounded-xl p-2.5 border border-slate-800/80 space-y-1.5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Available Cash:</span>
+                        <span class="font-bold text-emerald-400 mono" id="bjHudCash">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-400">Active Wager:</span>
+                        <span class="font-bold text-cyan-400 mono" id="bjHudWager">$25.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs border-t border-slate-800/60 pt-1">
+                        <span class="text-slate-400">Overall Net Worth:</span>
+                        <span class="font-bold text-slate-200 mono" id="bjHudNetWorth">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Game Status Banner -->
+                <div id="bjResultBox" class="min-h-[38px] flex items-center justify-center mb-2">
+                    <div class="text-center text-xs text-slate-400 font-medium px-3 py-1 rounded-lg bg-slate-950/40 border border-slate-800/50 w-full" id="bjStatusText">
+                        Place wager and press DEAL to start hand.
+                    </div>
+                </div>
+
+                <!-- Card Tables Display Area -->
+                <div class="space-y-3 my-2">
+                    <!-- Dealer Hand -->
+                    <div>
+                        <div class="flex justify-between text-[11px] text-slate-400 font-bold mb-1">
+                            <span>DEALER HAND:</span>
+                            <span class="mono text-cyan-300" id="dealerScoreVal">?</span>
+                        </div>
+                        <div class="flex gap-2 min-h-[112px] p-2 bg-slate-950/60 rounded-xl border border-slate-800/60 overflow-x-auto items-center" id="dealerCardContainer">
+                            <!-- Cards inserted dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Player Hand -->
+                    <div>
+                        <div class="flex justify-between text-[11px] text-slate-400 font-bold mb-1">
+                            <span>YOUR HAND:</span>
+                            <span class="mono text-emerald-400" id="playerScoreVal">0</span>
+                        </div>
+                        <div class="flex gap-2 min-h-[112px] p-2 bg-slate-950/60 rounded-xl border border-slate-800/60 overflow-x-auto items-center" id="playerCardContainer">
+                            <!-- Cards inserted dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wager & Action Buttons -->
+                <div class="space-y-3 mt-2">
+                    <div id="bjWagerControls">
+                        <label class="text-[11px] text-slate-400 font-bold uppercase mb-1 block">Wager Amount ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-2.5 text-slate-500 font-bold">$</span>
+                            <input type="number" id="bjWagerInput" value="25" min="1" step="5"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-7 pr-16 text-sm text-white font-bold mono focus:outline-none focus:border-cyan-500 transition"
+                                oninput="updateBjWagerHud()">
+                            <div class="absolute right-1 top-1 flex gap-1">
+                                <button onclick="setBjWager('half')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded font-bold">1/2</button>
+                                <button onclick="setBjWager('double')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1.5 rounded font-bold">2X</button>
+                                <button onclick="setBjWager('max')" class="text-[10px] bg-slate-800 hover:bg-slate-700 text-cyan-400 px-2 py-1.5 rounded font-bold">MAX</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="bjDeal()" id="btnBjDeal" class="py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs uppercase transition shadow-lg">
+                            DEAL
+                        </button>
+                        <button onclick="bjHit()" id="btnBjHit" disabled class="py-2.5 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-white font-extrabold rounded-xl text-xs uppercase transition">
+                            HIT
+                        </button>
+                        <button onclick="bjStand()" id="btnBjStand" disabled class="py-2.5 bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-white font-extrabold rounded-xl text-xs uppercase transition">
+                            STAND
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
-        `;
-        list.appendChild(row);
-      });
-    }
 
-    function updateAssetCalculations() {
-      assets.forEach((a, idx) => {
-        // Update live price and owned count text nodes without recreating input elements
-        const priceEl = document.getElementById(`asset-price-${idx}`);
-        const unitsEl = document.getElementById(`asset-units-${idx}`);
-        if (priceEl) priceEl.innerText = `$${a.price.toFixed(2)}`;
-        if (unitsEl) unitsEl.innerText = `${a.units}`;
+        </div>
 
-        // Buy calculation
-        const buyInput = document.getElementById(`buy-qty-${idx}`);
-        const buyPreview = document.getElementById(`buy-preview-${idx}`);
-        if (buyInput && buyPreview) {
-          const buyQty = parseInt(buyInput.value) || 0;
-          const totalCost = buyQty * a.price;
-          if (totalCost > liquidCash) {
-            buyPreview.className = 'calc-preview error';
-            buyPreview.innerText = `Total: $${totalCost.toFixed(2)} (NOT ENOUGH CASH)`;
-          } else {
-            buyPreview.className = 'calc-preview';
-            buyPreview.innerText = `Total Cost: $${totalCost.toFixed(2)}`;
-          }
+        <!-- INVESTMENT ASSETS MARKETPLACE -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">📈</span>
+                    <div>
+                        <h2 class="font-extrabold text-white text-base">ASSET MARKETPLACE & PORTFOLIO</h2>
+                        <p class="text-xs text-slate-400">Invest liquid cash into yield-bearing or appreciating assets</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 block uppercase font-bold">Total Asset Value</span>
+                    <span class="text-sm font-extrabold text-cyan-400 mono" id="marketTotalAssetVal">$0.00</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="assetsGrid">
+                <!-- Assets dynamically rendered here -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-5xl mx-auto px-4 py-4 text-center border-t border-slate-800/80 text-xs text-slate-500">
+        Chris Bridgeforth presents: breadgetters | v5.1 • All rights reserved.
+    </footer>
+
+    <!-- JS GAME LOGIC -->
+    <script>
+        // --- GAME STATE ---
+        const DEFAULT_STATE = {
+            version: "v5.1",
+            cash: 100.00,
+            peakNetWorth: 100.00,
+            assets: {
+                stocks: { name: "Tech Stocks", symbol: "STK", qty: 0, basePrice: 25.00, currentPrice: 25.00, icon: "📊" },
+                land: { name: "Acre Plot", symbol: "LND", qty: 0, basePrice: 150.00, currentPrice: 150.00, icon: "🏞️" },
+                realEstate: { name: "Rental Condo", symbol: "RE", qty: 0, basePrice: 800.00, currentPrice: 800.00, icon: "🏢" },
+                metals: { name: "Gold Bullion", symbol: "GLD", qty: 0, basePrice: 2500.00, currentPrice: 2500.00, icon: "🥇" }
+            }
+        };
+
+        let state = JSON.parse(localStorage.getItem('breadgetters_v5_1_state')) || JSON.parse(JSON.stringify(DEFAULT_STATE));
+
+        // Ensure state shape validity
+        if (!state.version || state.version !== "v5.1") {
+            state = JSON.parse(JSON.stringify(DEFAULT_STATE));
         }
 
-        // Sell calculation
-        const sellInput = document.getElementById(`sell-qty-${idx}`);
-        const sellPreview = document.getElementById(`sell-preview-${idx}`);
-        if (sellInput && sellPreview) {
-          const sellQty = parseInt(sellInput.value) || 0;
-          const totalReturn = sellQty * a.price;
-          sellPreview.className = 'calc-preview';
-          sellPreview.innerText = `Est. Return: $${totalReturn.toFixed(2)}`;
+        // Blackjack Game State
+        let bjDeck = [];
+        let bjPlayerHand = [];
+        let bjDealerHand = [];
+        let bjInProgress = false;
+
+        // --- CORE CALCULATIONS ---
+        function calculateTotalAssetValue() {
+            let total = 0;
+            for (let key in state.assets) {
+                total += state.assets[key].qty * state.assets[key].currentPrice;
+            }
+            return total;
         }
-      });
-    }
 
-    function bulkBuy(idx) {
-      const a = assets[idx];
-      const qtyInput = document.getElementById(`buy-qty-${idx}`);
-      const qty = parseInt(qtyInput.value) || 0;
-      if (qty <= 0) return;
-
-      const totalCost = qty * a.price;
-      if (totalCost > liquidCash) {
-        log(`MARKET: NOT ENOUGH CASH to buy ${qty} units of ${a.name}. Required: $${totalCost.toFixed(2)}.`);
-      } else {
-        liquidCash -= totalCost;
-        a.units += qty;
-        log(`MARKET: Purchased ${qty} units of ${a.name} for $${totalCost.toFixed(2)}.`);
-        updateTelemetry();
-      }
-    }
-
-    function bulkSell(idx) {
-      const a = assets[idx];
-      const qtyInput = document.getElementById(`sell-qty-${idx}`);
-      const qty = parseInt(qtyInput.value) || 0;
-      if (qty <= 0) return;
-
-      const sellQty = Math.min(qty, a.units);
-      if (sellQty > 0) {
-        const totalReturn = sellQty * a.price;
-        a.units -= sellQty;
-        liquidCash += totalReturn;
-        log(`MARKET: Sold ${sellQty} units of ${a.name} for $${totalReturn.toFixed(2)}.`);
-        updateTelemetry();
-      } else {
-        log(`MARKET: You do not own any units of ${a.name} to sell.`);
-      }
-    }
-
-    function sellAll(idx) {
-      const a = assets[idx];
-      if (a.units <= 0) {
-        log(`MARKET: No units of ${a.name} to sell.`);
-        return;
-      }
-      const totalReturn = a.units * a.price;
-      log(`MARKET: Liquidated all ${a.units} units of ${a.name} for $${totalReturn.toFixed(2)}.`);
-      liquidCash += totalReturn;
-      a.units = 0;
-      updateTelemetry();
-    }
-
-    // Compounding growth loop - Updates pricing values cleanly without re-rendering inputs
-    setInterval(() => {
-      assets.forEach(a => {
-        if (a.units > 0) {
-          const tickGrowth = (a.rate / 365 / 24);
-          a.price *= (1 + tickGrowth);
+        function calculateNetWorth() {
+            return state.cash + calculateTotalAssetValue();
         }
-      });
-      updateTelemetry();
-    }, 250);
 
-    function executeCustomReset() {
-      const val = parseFloat(document.getElementById('custom-reset-input').value);
-      if (!isNaN(val) && val >= 0) {
-        liquidCash = val;
-        peakNetWorth = Math.max(peakNetWorth, val);
-        log(`SYSTEM: Balance reset to $${val.toFixed(2)}.`);
-        updateTelemetry();
-      }
-    }
+        function checkAndUpdatePeak() {
+            const currentNW = calculateNetWorth();
+            if (currentNW > state.peakNetWorth) {
+                state.peakNetWorth = currentNW;
+            }
+        }
 
-    // Initialize UI
-    initAssetDOM();
-    updateTelemetry();
-  </script>
+        function saveState() {
+            checkAndUpdatePeak();
+            localStorage.setItem('breadgetters_v5_1_state', JSON.stringify(state));
+            updateAllTelemetryUI();
+        }
+
+        // --- GLOBAL TELEMETRY & UI UPDATES ---
+        function updateAllTelemetryUI() {
+            const assetVal = calculateTotalAssetValue();
+            const netWorth = calculateNetWorth();
+            checkAndUpdatePeak();
+
+            // Top Bar
+            document.getElementById('topCash').innerText = `$${state.cash.toFixed(2)}`;
+            document.getElementById('topNetWorth').innerText = `$${netWorth.toFixed(2)}`;
+            document.getElementById('topPeakNetWorth').innerText = `$${state.peakNetWorth.toFixed(2)}`;
+
+            // Asset Summary Pills at Top Bar
+            const pillsContainer = document.getElementById('ownedAssetsPills');
+            pillsContainer.innerHTML = '';
+            for (let key in state.assets) {
+                const item = state.assets[key];
+                const pill = document.createElement('div');
+                pill.className = "px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-[11px] flex items-center gap-1.5 whitespace-nowrap";
+                pill.innerHTML = `<span>${item.icon}</span><span class="text-slate-300 font-medium">${item.symbol}:</span><span class="font-extrabold text-cyan-400 mono">${item.qty}</span>`;
+                pillsContainer.appendChild(pill);
+            }
+
+            // Coin HUD
+            document.getElementById('coinHudCash').innerText = `$${state.cash.toFixed(2)}`;
+            document.getElementById('coinHudNetWorth').innerText = `$${netWorth.toFixed(2)}`;
+            updateCoinWagerHud();
+
+            // Blackjack HUD
+            document.getElementById('bjHudCash').innerText = `$${state.cash.toFixed(2)}`;
+            document.getElementById('bjHudNetWorth').innerText = `$${netWorth.toFixed(2)}`;
+            updateBjWagerHud();
+
+            // Market Summary
+            document.getElementById('marketTotalAssetVal').innerText = `$${assetVal.toFixed(2)}`;
+
+            // Render Asset Cards (without destroying active focused input)
+            renderAssetCards();
+        }
+
+        // --- COIN FLIP LOGIC ---
+        function updateCoinWagerHud() {
+            const wagerInput = document.getElementById('coinWagerInput');
+            let wager = parseFloat(wagerInput.value) || 0;
+            document.getElementById('coinHudWager').innerText = `$${wager.toFixed(2)}`;
+        }
+
+        function setCoinWager(type) {
+            const input = document.getElementById('coinWagerInput');
+            let current = parseFloat(input.value) || 0;
+            if (type === 'half') current = Math.max(1, Math.floor(current / 2));
+            if (type === 'double') current = Math.min(state.cash, current * 2);
+            if (type === 'max') current = Math.max(1, Math.floor(state.cash));
+            input.value = current;
+            updateCoinWagerHud();
+        }
+
+        function playCoinFlip(choice) {
+            const wagerInput = document.getElementById('coinWagerInput');
+            const wager = parseFloat(wagerInput.value);
+
+            if (isNaN(wager) || wager <= 0) {
+                showCoinResult("Enter a valid wager amount.", "neutral");
+                return;
+            }
+            if (wager > state.cash) {
+                showCoinResult("❌ Insufficient Liquid Cash for this wager!", "loss");
+                return;
+            }
+
+            // Lock controls during flip
+            document.getElementById('btnHeads').disabled = true;
+            document.getElementById('btnTails').disabled = true;
+
+            const coinEl = document.getElementById('coinElement');
+            coinEl.classList.add('flipping');
+
+            // Determine outcome
+            const isHeads = Math.random() < 0.5;
+            const outcomeStr = isHeads ? 'HEADS' : 'TAILS';
+            const won = choice === outcomeStr;
+
+            setTimeout(() => {
+                coinEl.classList.remove('flipping');
+                // Ensure coin face shows outcome angle
+                coinEl.style.transform = isHeads ? 'rotateY(0deg)' : 'rotateY(180deg)';
+
+                if (won) {
+                    state.cash += wager;
+                    showCoinResult(`+$${wager.toFixed(2)} WIN! Landed ${outcomeStr}`, "win");
+                } else {
+                    state.cash -= wager;
+                    showCoinResult(`-$${wager.toFixed(2)} LOSS! Landed ${outcomeStr}`, "loss");
+                }
+
+                saveState();
+
+                document.getElementById('btnHeads').disabled = false;
+                document.getElementById('btnTails').disabled = false;
+            }, 1200);
+        }
+
+        function showCoinResult(msg, type) {
+            const box = document.getElementById('coinResultBox');
+            let colorClass = "bg-slate-950/60 border-slate-800 text-slate-300";
+            if (type === 'win') colorClass = "bg-emerald-950/80 border-emerald-500/50 text-emerald-300 glow-green font-extrabold";
+            if (type === 'loss') colorClass = "bg-rose-950/80 border-rose-500/50 text-rose-300 glow-red font-extrabold";
+
+            box.innerHTML = `<div class="text-center text-xs px-3 py-2 rounded-xl border ${colorClass} w-full transition-all duration-300 animate-pulse">${msg}</div>`;
+        }
+
+        // --- BLACKJACK LOGIC ---
+        function updateBjWagerHud() {
+            const wagerInput = document.getElementById('bjWagerInput');
+            let wager = parseFloat(wagerInput.value) || 0;
+            document.getElementById('bjHudWager').innerText = `$${wager.toFixed(2)}`;
+        }
+
+        function setBjWager(type) {
+            if (bjInProgress) return;
+            const input = document.getElementById('bjWagerInput');
+            let current = parseFloat(input.value) || 0;
+            if (type === 'half') current = Math.max(1, Math.floor(current / 2));
+            if (type === 'double') current = Math.min(state.cash, current * 2);
+            if (type === 'max') current = Math.max(1, Math.floor(state.cash));
+            input.value = current;
+            updateBjWagerHud();
+        }
+
+        function createDeck() {
+            const suits = [
+                { symbol: '♠', color: 'black' },
+                { symbol: '♥', color: 'red' },
+                { symbol: '♦', color: 'red' },
+                { symbol: '♣', color: 'black' }
+            ];
+            const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            const deck = [];
+
+            for (let s of suits) {
+                for (let r of ranks) {
+                    let val = parseInt(r);
+                    if (['J', 'Q', 'K'].includes(r)) val = 10;
+                    if (r === 'A') val = 11;
+                    deck.push({ rank: r, suit: s.symbol, color: s.color, value: val });
+                }
+            }
+            // Shuffle
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            return deck;
+        }
+
+        function calcHandValue(hand) {
+            let val = 0;
+            let aces = 0;
+            for (let c of hand) {
+                val += c.value;
+                if (c.rank === 'A') aces++;
+            }
+            while (val > 21 && aces > 0) {
+                val -= 10;
+                aces--;
+            }
+            return val;
+        }
+
+        function renderCardHTML(card, isHidden = false) {
+            if (isHidden) {
+                return `<div class="playing-card-back">
+                    <span class="text-cyan-500/40 text-xl font-bold">⚡</span>
+                </div>`;
+            }
+
+            return `<div class="playing-card ${card.color}">
+                <div class="card-corner">
+                    <span>${card.rank}</span>
+                    <span class="text-xs">${card.suit}</span>
+                </div>
+                <div class="card-center">
+                    ${card.suit}
+                </div>
+                <div class="card-corner transform rotate-180">
+                    <span>${card.rank}</span>
+                    <span class="text-xs">${card.suit}</span>
+                </div>
+            </div>`;
+        }
+
+        function bjDeal() {
+            const wagerInput = document.getElementById('bjWagerInput');
+            const wager = parseFloat(wagerInput.value);
+
+            if (isNaN(wager) || wager <= 0) {
+                setBjStatus("Enter a valid wager amount.", "neutral");
+                return;
+            }
+            if (wager > state.cash) {
+                setBjStatus("❌ Insufficient Liquid Cash for this wager!", "loss");
+                return;
+            }
+
+            bjDeck = createDeck();
+            bjPlayerHand = [bjDeck.pop(), bjDeck.pop()];
+            bjDealerHand = [bjDeck.pop(), bjDeck.pop()];
+            bjInProgress = true;
+
+            document.getElementById('btnBjDeal').disabled = true;
+            document.getElementById('btnBjHit').disabled = false;
+            document.getElementById('btnBjStand').disabled = false;
+            document.getElementById('bjWagerInput').disabled = true;
+
+            renderBjHands(true);
+
+            const pVal = calcHandValue(bjPlayerHand);
+            const dVal = calcHandValue(bjDealerHand);
+
+            if (pVal === 21) {
+                // Natural Blackjack
+                if (dVal === 21) {
+                    endBjHand("push", wager, "Both have Blackjack! Push / Tie.");
+                } else {
+                    const winAmt = wager * 1.5;
+                    endBjHand("win", winAmt, `+$${winAmt.toFixed(2)} BLACKJACK PAYOUT (3:2)!`);
+                }
+            } else {
+                setBjStatus("Hand dealt! Choose Hit or Stand.", "neutral");
+            }
+        }
+
+        function bjHit() {
+            if (!bjInProgress) return;
+            bjPlayerHand.push(bjDeck.pop());
+            renderBjHands(true);
+
+            const pVal = calcHandValue(bjPlayerHand);
+            if (pVal > 21) {
+                const wager = parseFloat(document.getElementById('bjWagerInput').value);
+                endBjHand("loss", wager, `-$${wager.toFixed(2)} BUST! Total exceeded 21.`);
+            }
+        }
+
+        function bjStand() {
+            if (!bjInProgress) return;
+
+            // Dealer draw logic
+            let dVal = calcHandValue(bjDealerHand);
+            while (dVal < 17) {
+                bjDealerHand.push(bjDeck.pop());
+                dVal = calcHandValue(bjDealerHand);
+            }
+
+            const pVal = calcHandValue(bjPlayerHand);
+            const wager = parseFloat(document.getElementById('bjWagerInput').value);
+
+            renderBjHands(false);
+
+            if (dVal > 21) {
+                endBjHand("win", wager, `+$${wager.toFixed(2)} WIN! Dealer busted with ${dVal}.`);
+            } else if (pVal > dVal) {
+                endBjHand("win", wager, `+$${wager.toFixed(2)} WIN! You beat dealer (${pVal} vs ${dVal}).`);
+            } else if (pVal < dVal) {
+                endBjHand("loss", wager, `-$${wager.toFixed(2)} LOSS! Dealer wins (${dVal} vs ${pVal}).`);
+            } else {
+                endBjHand("push", 0, `PUSH / TIE! Both scored ${pVal}. Wager returned.`);
+            }
+        }
+
+        function endBjHand(result, amount, msg) {
+            bjInProgress = false;
+            document.getElementById('btnBjDeal').disabled = false;
+            document.getElementById('btnBjHit').disabled = true;
+            document.getElementById('btnBjStand').disabled = true;
+            document.getElementById('bjWagerInput').disabled = false;
+
+            if (result === 'win') {
+                state.cash += amount;
+                setBjStatus(msg, 'win');
+            } else if (result === 'loss') {
+                state.cash -= amount;
+                setBjStatus(msg, 'loss');
+            } else {
+                setBjStatus(msg, 'neutral');
+            }
+
+            renderBjHands(false);
+            saveState();
+        }
+
+        function renderBjHands(hideDealer) {
+            const pContainer = document.getElementById('playerCardContainer');
+            const dContainer = document.getElementById('dealerCardContainer');
+
+            pContainer.innerHTML = bjPlayerHand.map(c => renderCardHTML(c)).join('');
+
+            if (hideDealer) {
+                dContainer.innerHTML = renderCardHTML(bjDealerHand[0]) + renderCardHTML(null, true);
+                document.getElementById('dealerScoreVal').innerText = '?';
+            } else {
+                dContainer.innerHTML = bjDealerHand.map(c => renderCardHTML(c)).join('');
+                document.getElementById('dealerScoreVal').innerText = calcHandValue(bjDealerHand);
+            }
+
+            document.getElementById('playerScoreVal').innerText = calcHandValue(bjPlayerHand);
+        }
+
+        function setBjStatus(msg, type) {
+            const box = document.getElementById('bjResultBox');
+            let colorClass = "bg-slate-950/40 border-slate-800 text-slate-300";
+            if (type === 'win') colorClass = "bg-emerald-950/80 border-emerald-500/50 text-emerald-300 glow-green font-extrabold";
+            if (type === 'loss') colorClass = "bg-rose-950/80 border-rose-500/50 text-rose-300 glow-red font-extrabold";
+
+            box.innerHTML = `<div class="text-center text-xs px-3 py-1.5 rounded-lg border ${colorClass} w-full transition-all">${msg}</div>`;
+        }
+
+        // --- ASSETS & MARKETPLACE LOGIC ---
+        function renderAssetCards() {
+            const container = document.getElementById('assetsGrid');
+            const activeId = document.activeElement ? document.activeElement.id : null;
+            
+            // Build DOM if empty or sync inputs carefully without resetting focus
+            if (container.children.length === 0) {
+                container.innerHTML = '';
+                for (let key in state.assets) {
+                    const item = state.assets[key];
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col justify-between space-y-3";
+                    card.id = `assetCard_${key}`;
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl">${item.icon}</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 bg-slate-800 text-slate-300 rounded border border-slate-700">${item.symbol}</span>
+                            </div>
+                            <h3 class="font-extrabold text-white text-sm mt-2">${item.name}</h3>
+                            <div class="flex items-baseline justify-between mt-1">
+                                <span class="text-xs text-slate-400">Price:</span>
+                                <span class="text-sm font-bold text-amber-400 mono" id="assetPrice_${key}">$${item.currentPrice.toFixed(2)}</span>
+                            </div>
+                            <div class="flex items-baseline justify-between mt-0.5">
+                                <span class="text-xs text-slate-400">Owned:</span>
+                                <span class="text-xs font-bold text-emerald-400 mono" id="assetQty_${key}">${item.qty}</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 border-t border-slate-800/80 pt-2">
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="assetInput_${key}" value="1" min="1" 
+                                    class="w-full bg-slate-900 border border-slate-800 rounded-lg py-1 px-2 text-xs text-white font-bold mono focus:outline-none focus:border-cyan-500"
+                                    oninput="updateAssetCalculation('${key}')">
+                            </div>
+
+                            <div class="text-[10px] text-right mono" id="assetCalcCost_${key}">
+                                Cost: <span class="text-cyan-300 font-bold">$${item.currentPrice.toFixed(2)}</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <button onclick="buyAsset('${key}')" id="btnBuy_${key}" class="py-1.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-extrabold rounded-lg text-xs transition">
+                                    BUY
+                                </button>
+                                <button onclick="sellAsset('${key}')" id="btnSell_${key}" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg text-xs transition">
+                                    SELL
+                                </button>
+                            </div>
+                            <button onclick="sellAllAsset('${key}')" class="w-full py-1 text-[10px] text-slate-400 hover:text-rose-400 bg-slate-900/50 hover:bg-slate-900 rounded font-semibold transition">
+                                SELL ALL
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                    updateAssetCalculation(key);
+                }
+            } else {
+                // Perform quick lightweight DOM refresh without replacing inputs
+                for (let key in state.assets) {
+                    const item = state.assets[key];
+                    const priceEl = document.getElementById(`assetPrice_${key}`);
+                    const qtyEl = document.getElementById(`assetQty_${key}`);
+                    if (priceEl) priceEl.innerText = `$${item.currentPrice.toFixed(2)}`;
+                    if (qtyEl) qtyEl.innerText = item.qty;
+                    updateAssetCalculation(key);
+                }
+            }
+        }
+
+        function updateAssetCalculation(key) {
+            const item = state.assets[key];
+            const input = document.getElementById(`assetInput_${key}`);
+            const calcEl = document.getElementById(`assetCalcCost_${key}`);
+            if (!input || !calcEl) return;
+
+            const qty = parseInt(input.value) || 0;
+            const totalCost = qty * item.currentPrice;
+
+            if (totalCost > state.cash) {
+                calcEl.innerHTML = `Cost: <span class="text-rose-400 font-extrabold">$${totalCost.toFixed(2)} (NOT ENOUGH)</span>`;
+            } else {
+                calcEl.innerHTML = `Cost: <span class="text-cyan-300 font-bold">$${totalCost.toFixed(2)}</span>`;
+            }
+        }
+
+        function buyAsset(key) {
+            const item = state.assets[key];
+            const input = document.getElementById(`assetInput_${key}`);
+            const qty = parseInt(input.value) || 0;
+
+            if (qty <= 0) return;
+            const cost = qty * item.currentPrice;
+
+            if (cost > state.cash) {
+                alert("Insufficient cash to execute purchase!");
+                return;
+            }
+
+            state.cash -= cost;
+            item.qty += qty;
+            saveState();
+        }
+
+        function sellAsset(key) {
+            const item = state.assets[key];
+            const input = document.getElementById(`assetInput_${key}`);
+            const qty = parseInt(input.value) || 0;
+
+            if (qty <= 0) return;
+            if (qty > item.qty) {
+                alert("You don't own that many units!");
+                return;
+            }
+
+            const revenue = qty * item.currentPrice;
+            state.cash += revenue;
+            item.qty -= qty;
+            saveState();
+        }
+
+        function sellAllAsset(key) {
+            const item = state.assets[key];
+            if (item.qty <= 0) return;
+
+            const revenue = item.qty * item.currentPrice;
+            state.cash += revenue;
+            item.qty = 0;
+            saveState();
+        }
+
+        // Market Price Fluctuation Tick (Simulated Market Volatility)
+        setInterval(() => {
+            for (let key in state.assets) {
+                const item = state.assets[key];
+                const changePct = (Math.random() - 0.48) * 0.03; // Slight upward bias
+                item.currentPrice = Math.max(1.00, item.currentPrice * (1 + changePct));
+            }
+            updateAllTelemetryUI();
+        }, 3000);
+
+        function resetGame() {
+            if (confirm("Reset all cash, assets, and peak net worth scores to starting state?")) {
+                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                saveState();
+            }
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            updateAllTelemetryUI();
+        };
+    </script>
 </body>
 </html>
 
