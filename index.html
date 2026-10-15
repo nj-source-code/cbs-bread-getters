@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHRIS BRIDGEFORTH’S BREAD GETTERS</title>
+  <style>
+    :root {
+      --bg-main: #050608;
+      --bg-card: #0a0d12;
+      --bg-card-hover: #121720;
+      --border-color: #1e2638;
+      --border-accent: #00f0ff;
+      --text-main: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-bright: #ffffff;
+      --brand-text: #00f0ff;
+      --accent-gold: #ffd700;
+      --accent-red: #ff4d4d;
+      --accent-green: #00ff88;
+      --highlight-bg: #0f172a;
+      --font-mono: 'Courier New', Courier, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 12px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bread-svg-icon {
+      width: 40px;
+      height: 40px;
+      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
+    }
+
+    .brand-title {
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      color: var(--brand-text);
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .top-telemetry-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .stat-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-align: right;
+    }
+
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-value {
+      font-size: 1rem;
+      font-weight: bold;
+      color: var(--accent-green);
+    }
+
+    .stat-value.gold {
+      color: var(--accent-gold);
+      background: rgba(255, 215, 0, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .terminal-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-dim);
+      padding: 8px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--highlight-bg);
+      border-color: var(--border-accent);
+      color: var(--brand-text);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .game-card {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      border-radius: 6px;
+    }
+
+    .btn-action {
+      background: var(--highlight-bg);
+      color: var(--text-bright);
+      border: 1px solid var(--border-accent);
+      padding: 10px 16px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-action:hover {
+      background: var(--border-accent);
+      color: #000;
+    }
+
+    .input-field {
+      background: var(--bg-main);
+      border: 1px solid var(--border-color);
+      color: var(--text-bright);
+      padding: 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .asset-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .asset-info { display: flex; flex-direction: column; }
+    .asset-name { font-size: 0.9rem; font-weight: bold; color: var(--text-bright); }
+    .asset-rate { font-size: 0.75rem; color: var(--accent-green); }
+
+    .asset-controls { display: flex; gap: 8px; }
+    .btn-sm { padding: 6px 12px; font-size: 0.75rem; width: auto; margin-top: 0; }
+
+    .console-box {
+      background-color: var(--bg-main);
+      border: 1px dashed var(--border-color);
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 0.75rem;
+      color: var(--accent-green);
+      height: 90px;
+      overflow-y: auto;
+      margin-top: 14px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-container">
+      <svg class="bread-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 28C12 16 20 10 32 10C44 10 52 16 52 28C55 35 53 50 47 50H17C11 50 9 35 12 28Z" fill="#0a0d12" stroke="#00f0ff" stroke-width="3"/>
+        <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="brand-title">CHRIS BRIDGEFORTH’S BREAD GETTERS</div>
+        <div class="brand-subtitle">QUANTUM FINANCIAL TERMINAL // WEALTH ACCELERATOR</div>
+      </div>
+    </div>
+
+    <div class="top-telemetry-box">
+      <div class="stat-pill">
+        <div class="stat-label">Liquid Cash</div>
+        <div class="stat-value" id="top-cash">$100.00</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-label">Peak Net Worth (ATH)</div>
+        <div class="stat-value gold" id="top-ath">$100.00</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="terminal-card">
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('wealth')">GAMBLING FLOOR</button>
+      <button class="tab-btn" onclick="switchTab('assets')">ASSET MARKET</button>
+      <button class="tab-btn" onclick="switchTab('settings')">BALANCE RESET</button>
+    </div>
+
+    <div id="tab-wealth" class="tab-content active">
+      <div class="game-grid">
+        <div class="game-card">
+          <div class="stat-label">CYBER COIN FLIP (1:1 PAYOUT)</div>
+          <input type="number" id="coin-wager" class="input-field" value="10" min="1">
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('HEADS')">HEADS</button>
+            <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('TAILS')">TAILS</button>
+          </div>
+        </div>
+
+        <div class="game-card">
+          <div class="stat-label">BLACKJACK (3:2 PAYOUT)</div>
+          <div id="bj-status" style="font-size: 0.75rem; margin: 8px 0; color: var(--text-dim);">Place wager & deal.</div>
+          <input type="number" id="bj-wager" class="input-field" value="25" min="1">
+          <div style="display: flex; gap: 6px; margin-top: 10px;">
+            <button class="btn-action btn-sm" id="bj-deal" onclick="startBlackjack()">DEAL</button>
+            <button class="btn-action btn-sm" id="bj-hit" onclick="hitBlackjack()" disabled>HIT</button>
+            <button class="btn-action btn-sm" id="bj-stand" onclick="standBlackjack()" disabled>STAND</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-assets" class="tab-content">
+      <div class="stat-label" style="margin-bottom: 8px;">INVESTMENT PORTFOLIO (ANNUALIZED RETURNS)</div>
+      <div id="asset-list">
+        </div>
+    </div>
+
+    <div id="tab-settings" class="tab-content">
+      <div class="stat-label">CUSTOM CASH BALANCE RESET</div>
+      <input type="number" id="custom-reset-input" class="input-field" value="100" min="0">
+      <button class="btn-action" onclick="executeCustomReset()">APPLY NEW BALANCE</button>
+    </div>
+  </div>
+
+  <div class="console-box" id="terminal-console">
+[SYSTEM] CHRIS BRIDGEFORTH’S BREAD GETTERS initialized.
+[SYSTEM] Starting balance: $100.00. Ready for execution.
+  </div>
+
+  <script>
+    let liquidCash = 100.00;
+    let peakNetWorth = 100.00;
+
+    const assets = [
+      { id: 'stocks', name: 'Stocks Pool', rate: 0.08, price: 50.00, units: 0 },
+      { id: 'land', name: 'Land Holdings', rate: 0.07, price: 100.00, units: 0 },
+      { id: 'realestate', name: 'Real Estate', rate: 0.06, price: 250.00, units: 0 },
+      { id: 'metals', name: 'Precious Metals', rate: 0.05, price: 20.00, units: 0 }
+    ];
+
+    function log(msg) {
+      const consoleBox = document.getElementById('terminal-console');
+      const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+      consoleBox.innerText += `\n[${time}] ${msg}`;
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function updateTelemetry() {
+      let portfolioVal = assets.reduce((sum, a) => sum + (a.units * a.price), 0);
+      let netWorth = liquidCash + portfolioVal;
+
+      if (netWorth > peakNetWorth) {
+        peakNetWorth = netWorth;
+      }
+
+      document.getElementById('top-cash').innerText = `$${liquidCash.toFixed(2)}`;
+      document.getElementById('top-ath').innerText = `$${peakNetWorth.toFixed(2)}`;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    function playCoinFlip(choice) {
+      const wager = parseFloat(document.getElementById('coin-wager').value);
+      if (isNaN(wager) || wager <= 0 || wager > liquidCash) {
+        log("COIN FLIP: Invalid or insufficient wager.");
+        return;
+      }
+
+      const result = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
+      if (choice === result) {
+        liquidCash += wager;
+        log(`COIN FLIP: Landed ${result}. WON $${wager.toFixed(2)}!`);
+      } else {
+        liquidCash -= wager;
+        log(`COIN FLIP: Landed ${result}. LOST $${wager.toFixed(2)}.`);
+      }
+      updateTelemetry();
+    }
+
+    let bjState = { pot: 0, active: false };
+    function startBlackjack() {
+      const wager = parseFloat(document.getElementById('bj-wager').value);
+      if (isNaN(wager) || wager <= 0 || wager > liquidCash) {
+        log("BLACKJACK: Invalid or insufficient wager.");
+        return;
+      }
+      liquidCash -= wager;
+      bjState = { pot: wager, active: true };
+      document.getElementById('bj-status').innerText = `Hand dealt! Wager: $${wager}. Choose Hit or Stand.`;
+      document.getElementById('bj-deal').disabled = true;
+      document.getElementById('bj-hit').disabled = false;
+      document.getElementById('bj-stand').disabled = false;
+      updateTelemetry();
+    }
+
+    function hitBlackjack() {
+      if (!bjState.active) return;
+      if (Math.random() > 0.5) {
+        liquidCash += bjState.pot * 2;
+        log(`BLACKJACK: Hit success! Won $${(bjState.pot * 2).toFixed(2)}.`);
+        document.getElementById('bj-status').innerText = `Hit won!`;
+      } else {
+        log(`BLACKJACK: Bust! Lost $${bjState.pot}.`);
+        document.getElementById('bj-status').innerText = `Bust! House wins.`;
+      }
+      endBlackjackHand();
+      updateTelemetry();
+    }
+
+    function standBlackjack() {
+      if (!bjState.active) return;
+      if (Math.random() > 0.45) {
+        liquidCash += bjState.pot * 1.5;
+        log(`BLACKJACK: Stand won (3:2)! Won $${(bjState.pot * 1.5).toFixed(2)}.`);
+        document.getElementById('bj-status').innerText = `Stand win!`;
+      } else {
+        log(`BLACKJACK: Stand lost. Dealer wins.`);
+        document.getElementById('bj-status').innerText = `Dealer higher total.`;
+      }
+      endBlackjackHand();
+      updateTelemetry();
+    }
+
+    function endBlackjackHand() {
+      bjState.active = false;
+      document.getElementById('bj-deal').disabled = false;
+      document.getElementById('bj-hit').disabled = true;
+      document.getElementById('bj-stand').disabled = true;
+    }
+
+    function renderAssets() {
+      const list = document.getElementById('asset-list');
+      list.innerHTML = '';
+
+      assets.forEach((a, idx) => {
+        const row = document.createElement('div');
+        row.className = 'asset-row';
+        row.innerHTML = `
+          <div class="asset-info">
+            <span class="asset-name">${a.name} (${a.units} Owned)</span>
+            <span class="asset-rate">+${(a.rate * 100).toFixed(0)}% p.a. | Price: $${a.price.toFixed(2)}</span>
+          </div>
+          <div class="asset-controls">
+            <button class="btn-action btn-sm" onclick="buyAsset(${idx})">BUY</button>
+            <button class="btn-action btn-sm" onclick="sellAsset(${idx})">SELL</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function buyAsset(idx) {
+      const a = assets[idx];
+      if (liquidCash >= a.price) {
+        liquidCash -= a.price;
+        a.units += 1;
+        log(`MARKET: Bought 1 unit of ${a.name}.`);
+        renderAssets();
+        updateTelemetry();
+      } else {
+        log("MARKET: Insufficient liquid cash.");
+      }
+    }
+
+    function sellAsset(idx) {
+      const a = assets[idx];
+      if (a.units > 0) {
+        a.units -= 1;
+        liquidCash += a.price;
+        log(`MARKET: Sold 1 unit of ${a.name}.`);
+        renderAssets();
+        updateTelemetry();
+      }
+    }
+
+    // Annualized compounding growth simulation loop
+    setInterval(() => {
+      assets.forEach(a => {
+        if (a.units > 0) {
+          const tickGrowth = (a.rate / 365 / 24);
+          a.price *= (1 + tickGrowth);
+        }
+      });
+      renderAssets();
+      updateTelemetry();
+    }, 250);
+
+    function executeCustomReset() {
+      const val = parseFloat(document.getElementById('custom-reset-input').value);
+      if (!isNaN(val) && val >= 0) {
+        liquidCash = val;
+        peakNetWorth = Math.max(peakNetWorth, val);
+        log(`SYSTEM: Balance reset to $${val.toFixed(2)}.`);
+        updateTelemetry();
+      }
+    }
+
+    renderAssets();
+    updateTelemetry();
+  </script>
+</body>
+</html>
+
