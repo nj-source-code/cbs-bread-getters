@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chris Bridgeforth presents: breadgetters</title>
+  <title>Chris Bridgeforth presents: breadgetters v5.0</title>
   <style>
     :root {
       --bg-main: #050608;
@@ -194,6 +194,7 @@
       margin-top: 10px;
       transition: all 0.2s;
       width: 100%;
+      touch-action: manipulation;
     }
 
     .btn-action:hover {
@@ -201,16 +202,28 @@
       color: #000;
     }
 
+    .btn-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
     .input-field {
       background: var(--bg-main);
       border: 1px solid var(--border-color);
       color: var(--text-bright);
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-radius: 4px;
       font-family: var(--font-mono);
       width: 100%;
       margin-top: 6px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      -webkit-appearance: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--border-accent);
+      outline: none;
+      box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
     }
 
     .error-msg {
@@ -284,33 +297,74 @@
     .playing-card.red { color: #d32f2f; }
     .playing-card.hidden { background: #1e2638; color: #94a3b8; justify-content: center; align-items: center; }
 
-    /* Asset Market Rows */
+    /* Asset Market Layout */
     .asset-row {
       background: var(--bg-main);
       border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 10px;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
     }
 
     .asset-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
     }
 
-    .asset-name { font-size: 0.9rem; font-weight: bold; color: var(--text-bright); }
+    .asset-name { font-size: 0.95rem; font-weight: bold; color: var(--text-bright); }
     .asset-rate { font-size: 0.7rem; color: var(--accent-green); }
 
-    .asset-controls-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto auto;
-      gap: 6px;
+    .asset-trade-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .trade-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .trade-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .trade-input-group {
+      display: flex;
+      gap: 8px;
       align-items: center;
     }
 
-    .btn-sm { padding: 6px 10px; font-size: 0.75rem; width: auto; margin-top: 0; }
+    .btn-sm { 
+      padding: 8px 14px; 
+      font-size: 0.75rem; 
+      width: auto; 
+      margin-top: 0;
+      white-space: nowrap;
+    }
+
+    .calc-preview {
+      font-size: 0.7rem;
+      color: var(--accent-green);
+      margin-top: 4px;
+    }
+
+    .calc-preview.error {
+      color: var(--accent-red);
+      font-weight: bold;
+    }
 
     .help-section {
       font-size: 0.75rem;
@@ -343,7 +397,7 @@
         <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
       <div>
-        <div class="brand-title">Chris Bridgeforth presents: breadgetters <span class="version-tag">| v4.9</span></div>
+        <div class="brand-title">Chris Bridgeforth presents: breadgetters <span class="version-tag">| v5.0</span></div>
         <div class="brand-subtitle">FINANCIAL TERMINAL & WEALTH ACCELERATOR</div>
       </div>
     </div>
@@ -384,7 +438,7 @@
               <div class="coin-face">$?</div>
             </div>
           </div>
-          <input type="number" id="coin-wager" class="input-field" value="10" min="1" oninput="updateGameHUDs()">
+          <input type="number" id="coin-wager" class="input-field" value="10" min="1" step="any" oninput="updateGameHUDs()">
           <div class="error-msg" id="cf-error"></div>
           <div style="display: flex; gap: 8px; margin-top: 8px;">
             <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('HEADS')">FLIP HEADS</button>
@@ -409,7 +463,7 @@
           <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Your Hand:</div>
           <div class="cards-area" id="player-cards"></div>
 
-          <input type="number" id="bj-wager" class="input-field" value="25" min="1" oninput="updateGameHUDs()">
+          <input type="number" id="bj-wager" class="input-field" value="25" min="1" step="any" oninput="updateGameHUDs()">
           <div class="error-msg" id="bj-error"></div>
           <div style="display: flex; gap: 6px; margin-top: 8px;">
             <button class="btn-action btn-sm" id="bj-deal" onclick="startBlackjack()">DEAL</button>
@@ -452,7 +506,7 @@
           <li>Real Estate: 6% Per Annum</li>
           <li>Precious Metals: 5% Per Annum</li>
         </ul>
-        <p>You can buy or sell multiple units simultaneously. Selling liquidates units instantly back into your cash balance.</p>
+        <p>Type in any desired purchase quantity. The system automatically calculates total cost prior to purchase and gives instant cash alerts.</p>
 
         <h4>Peak Net Worth (ATH)</h4>
         <p>Your highest recorded combined net worth (Cash + Active Asset Valuation) is permanently tracked in the gold telemetry pill at the top.</p>
@@ -461,8 +515,8 @@
   </div>
 
   <div class="console-box" id="terminal-console">
-[SYSTEM] Chris Bridgeforth presents: breadgetters v4.9 initialized.
-[SYSTEM] Starting balance: $100.00. Ready for execution.
+[SYSTEM] Chris Bridgeforth presents: breadgetters v5.0 initialized.
+[SYSTEM] Starting balance: $100.00. Interactive asset controls calibrated.
   </div>
 
   <script>
@@ -494,6 +548,7 @@
       document.getElementById('top-cash').innerText = `$${liquidCash.toFixed(2)}`;
       document.getElementById('top-ath').innerText = `$${peakNetWorth.toFixed(2)}`;
       updateGameHUDs();
+      updateAssetCalculations();
     }
 
     function updateGameHUDs() {
@@ -528,7 +583,7 @@
       document.getElementById(`tab-${tabId}`).classList.add('active');
     }
 
-    // Coin Flip with 3D Animation
+    // Coin Flip
     function playCoinFlip(choice) {
       const wager = parseFloat(document.getElementById('coin-wager').value);
       if (isNaN(wager) || wager <= 0) {
@@ -536,7 +591,7 @@
         return;
       }
       if (wager > liquidCash) {
-        log("COIN FLIP: Not enough cash for wager.");
+        log("COIN FLIP: NOT ENOUGH CASH.");
         return;
       }
 
@@ -629,7 +684,7 @@
       document.getElementById('bj-hit').disabled = false;
       document.getElementById('bj-stand').disabled = false;
       updateTelemetry();
-      log(`BLACKJACK: Game started with $${wager} wager.`);
+      log(`BLACKJACK: Game started with $${wager.toFixed(2)} wager.`);
 
       if (calculateHand(bjState.playerHand) === 21) {
         log("BLACKJACK: Natural Blackjack!");
@@ -643,7 +698,7 @@
       renderCards();
       const pTotal = calculateHand(bjState.playerHand);
       if (pTotal > 21) {
-        log(`BLACKJACK: Bust! Total ${pTotal}. Lost $${bjState.pot}.`);
+        log(`BLACKJACK: Bust! Total ${pTotal}. Lost $${bjState.pot.toFixed(2)}.`);
         document.getElementById('bj-status').innerText = `Bust! Total: ${pTotal}. House wins.`;
         endBlackjackHand();
       } else {
@@ -668,7 +723,7 @@
         log(`BLACKJACK: Won! Payout $${winAmount.toFixed(2)}.`);
         document.getElementById('bj-status').innerText = `You Win! Player: ${pTotal}, Dealer: ${dTotal}.`;
       } else if (pTotal < dTotal) {
-        log(`BLACKJACK: Dealer wins with ${dTotal}. Lost $${bjState.pot}.`);
+        log(`BLACKJACK: Dealer wins with ${dTotal}. Lost $${bjState.pot.toFixed(2)}.`);
         document.getElementById('bj-status').innerText = `Dealer wins. Player: ${pTotal}, Dealer: ${dTotal}.`;
       } else {
         liquidCash += bjState.pot;
@@ -686,8 +741,8 @@
       document.getElementById('bj-stand').disabled = true;
     }
 
-    // Asset Market with Bulk Buy/Sell & Insufficient Cash Detection
-    function renderAssets() {
+    // Asset Market Setup & Updating Without Destroying Inputs
+    function initAssetDOM() {
       const list = document.getElementById('asset-list');
       list.innerHTML = '';
 
@@ -697,18 +752,73 @@
         row.innerHTML = `
           <div class="asset-header">
             <div>
-              <div class="asset-name">${a.name} (${a.units} Owned)</div>
-              <div class="asset-rate">+${(a.rate * 100).toFixed(0)}% Per Annum | Price: $${a.price.toFixed(2)}</div>
+              <div class="asset-name" id="asset-title-${idx}">${a.name} (<span id="asset-units-${idx}">0</span> Owned)</div>
+              <div class="asset-rate">+${(a.rate * 100).toFixed(0)}% Per Annum | Price: <span id="asset-price-${idx}">$${a.price.toFixed(2)}</span></div>
             </div>
           </div>
-          <div class="asset-controls-grid">
-            <input type="number" id="buy-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
-            <button class="btn-action btn-sm" onclick="bulkBuy(${idx})">BUY</button>
-            <input type="number" id="sell-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
-            <button class="btn-action btn-sm" onclick="bulkSell(${idx})">SELL</button>
+          <div class="asset-trade-container">
+            <!-- BUY SECTION -->
+            <div class="trade-box">
+              <div class="trade-box-header">
+                <span>PURCHASE ASSETS</span>
+                <span id="buy-preview-${idx}" class="calc-preview">Est. Total: $0.00</span>
+              </div>
+              <div class="trade-input-group">
+                <input type="number" id="buy-qty-${idx}" class="input-field" placeholder="Units to buy" value="1" min="1" step="1" oninput="updateAssetCalculations()">
+                <button class="btn-action btn-sm" onclick="bulkBuy(${idx})">BUY</button>
+              </div>
+            </div>
+
+            <!-- SELL SECTION -->
+            <div class="trade-box">
+              <div class="trade-box-header">
+                <span>LIQUIDATE ASSETS</span>
+                <span id="sell-preview-${idx}" class="calc-preview">Est. Return: $0.00</span>
+              </div>
+              <div class="trade-input-group">
+                <input type="number" id="sell-qty-${idx}" class="input-field" placeholder="Units to sell" value="1" min="1" step="1" oninput="updateAssetCalculations()">
+                <button class="btn-action btn-sm" onclick="bulkSell(${idx})">SELL</button>
+                <button class="btn-action btn-sm" style="background:#221526; border-color:#ff4d4d;" onclick="sellAll(${idx})">SELL ALL</button>
+              </div>
+            </div>
           </div>
         `;
         list.appendChild(row);
+      });
+    }
+
+    function updateAssetCalculations() {
+      assets.forEach((a, idx) => {
+        // Update live price and owned count text nodes without recreating input elements
+        const priceEl = document.getElementById(`asset-price-${idx}`);
+        const unitsEl = document.getElementById(`asset-units-${idx}`);
+        if (priceEl) priceEl.innerText = `$${a.price.toFixed(2)}`;
+        if (unitsEl) unitsEl.innerText = `${a.units}`;
+
+        // Buy calculation
+        const buyInput = document.getElementById(`buy-qty-${idx}`);
+        const buyPreview = document.getElementById(`buy-preview-${idx}`);
+        if (buyInput && buyPreview) {
+          const buyQty = parseInt(buyInput.value) || 0;
+          const totalCost = buyQty * a.price;
+          if (totalCost > liquidCash) {
+            buyPreview.className = 'calc-preview error';
+            buyPreview.innerText = `Total: $${totalCost.toFixed(2)} (NOT ENOUGH CASH)`;
+          } else {
+            buyPreview.className = 'calc-preview';
+            buyPreview.innerText = `Total Cost: $${totalCost.toFixed(2)}`;
+          }
+        }
+
+        // Sell calculation
+        const sellInput = document.getElementById(`sell-qty-${idx}`);
+        const sellPreview = document.getElementById(`sell-preview-${idx}`);
+        if (sellInput && sellPreview) {
+          const sellQty = parseInt(sellInput.value) || 0;
+          const totalReturn = sellQty * a.price;
+          sellPreview.className = 'calc-preview';
+          sellPreview.innerText = `Est. Return: $${totalReturn.toFixed(2)}`;
+        }
       });
     }
 
@@ -725,7 +835,6 @@
         liquidCash -= totalCost;
         a.units += qty;
         log(`MARKET: Purchased ${qty} units of ${a.name} for $${totalCost.toFixed(2)}.`);
-        renderAssets();
         updateTelemetry();
       }
     }
@@ -742,14 +851,26 @@
         a.units -= sellQty;
         liquidCash += totalReturn;
         log(`MARKET: Sold ${sellQty} units of ${a.name} for $${totalReturn.toFixed(2)}.`);
-        renderAssets();
         updateTelemetry();
       } else {
         log(`MARKET: You do not own any units of ${a.name} to sell.`);
       }
     }
 
-    // Compounding growth simulation loop
+    function sellAll(idx) {
+      const a = assets[idx];
+      if (a.units <= 0) {
+        log(`MARKET: No units of ${a.name} to sell.`);
+        return;
+      }
+      const totalReturn = a.units * a.price;
+      log(`MARKET: Liquidated all ${a.units} units of ${a.name} for $${totalReturn.toFixed(2)}.`);
+      liquidCash += totalReturn;
+      a.units = 0;
+      updateTelemetry();
+    }
+
+    // Compounding growth loop - Updates pricing values cleanly without re-rendering inputs
     setInterval(() => {
       assets.forEach(a => {
         if (a.units > 0) {
@@ -757,7 +878,6 @@
           a.price *= (1 + tickGrowth);
         }
       });
-      renderAssets();
       updateTelemetry();
     }, 250);
 
@@ -771,10 +891,10 @@
       }
     }
 
-    renderAssets();
+    // Initialize UI
+    initAssetDOM();
     updateTelemetry();
   </script>
 </body>
 </html>
-
 
