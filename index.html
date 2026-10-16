@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chris Bridgeforth presents: breadgetters</title>
+  <title>Chris Bridgeforth presents: breadgetters // v5.3</title>
   <style>
     :root {
-      --bg-main: #050608;
-      --bg-card: #0a0d12;
-      --bg-card-hover: #121720;
-      --border-color: #1e2638;
+      --bg-main: #06080d;
+      --bg-card: #0c1017;
+      --bg-card-hover: #131a26;
+      --border-color: #1f293d;
       --border-accent: #00f0ff;
       --text-main: #e2e8f0;
-      --text-dim: #94a3b8;
+      --text-dim: #8a99ad;
       --text-bright: #ffffff;
       --brand-text: #00f0ff;
       --accent-gold: #ffd700;
       --accent-red: #ff4d4d;
       --accent-green: #00ff88;
-      --highlight-bg: #0f172a;
+      --highlight-bg: #101726;
       --font-mono: 'Courier New', Courier, monospace;
     }
 
@@ -28,10 +28,10 @@
       background-color: var(--bg-main);
       color: var(--text-main);
       font-family: var(--font-mono);
-      font-size: 14px;
-      line-height: 1.5;
-      padding: 12px;
-      max-width: 900px;
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 10px;
+      max-width: 880px;
       margin: 0 auto;
     }
 
@@ -39,27 +39,27 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 12px;
-      margin-bottom: 16px;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
       border-bottom: 1px solid var(--border-color);
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
 
     .brand-container {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .bread-svg-icon {
-      width: 40px;
-      height: 40px;
-      filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
+      width: 36px;
+      height: 36px;
+      filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4));
     }
 
     .brand-title {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: bold;
       letter-spacing: 1px;
       color: var(--brand-text);
@@ -67,41 +67,41 @@
     }
 
     .version-tag {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       color: var(--text-dim);
       font-weight: normal;
-      margin-left: 6px;
+      margin-left: 4px;
     }
 
     .brand-subtitle {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       color: var(--text-dim);
       letter-spacing: 1px;
     }
 
     .top-telemetry-box {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
     .stat-pill {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      padding: 6px 10px;
-      border-radius: 6px;
+      padding: 5px 8px;
+      border-radius: 4px;
       text-align: right;
     }
 
     .stat-label {
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .stat-value {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: bold;
       color: var(--accent-green);
     }
@@ -109,26 +109,26 @@
     .stat-value.gold {
       color: var(--accent-gold);
       background: rgba(255, 215, 0, 0.08);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
+      padding: 1px 5px;
+      border-radius: 3px;
+      border: 1px solid rgba(255, 215, 0, 0.25);
     }
 
     .terminal-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     }
 
     .nav-tabs {
       display: flex;
-      gap: 6px;
-      margin-bottom: 16px;
+      gap: 5px;
+      margin-bottom: 14px;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       flex-wrap: wrap;
     }
 
@@ -136,11 +136,11 @@
       background: transparent;
       border: 1px solid var(--border-color);
       color: var(--text-dim);
-      padding: 8px 12px;
+      padding: 6px 10px;
       font-family: var(--font-mono);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: bold;
-      border-radius: 4px;
+      border-radius: 3px;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -149,7 +149,7 @@
       background: var(--highlight-bg);
       border-color: var(--border-accent);
       color: var(--brand-text);
-      box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 6px rgba(0, 240, 255, 0.25);
     }
 
     .tab-content { display: none; }
@@ -157,15 +157,15 @@
 
     .game-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
     }
 
     .game-card {
       background: var(--bg-main);
       border: 1px solid var(--border-color);
-      padding: 16px;
-      border-radius: 6px;
+      padding: 12px;
+      border-radius: 5px;
     }
 
     .game-hud {
@@ -173,11 +173,11 @@
       justify-content: space-between;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 0.7rem;
+      padding: 5px 8px;
+      border-radius: 3px;
+      font-size: 0.65rem;
       color: var(--text-dim);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       flex-wrap: wrap;
       gap: 4px;
     }
@@ -188,13 +188,13 @@
       background: var(--highlight-bg);
       color: var(--text-bright);
       border: 1px solid var(--border-accent);
-      padding: 10px 16px;
-      border-radius: 4px;
+      padding: 8px 12px;
+      border-radius: 3px;
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 8px;
       transition: all 0.2s;
       width: 100%;
     }
@@ -208,40 +208,45 @@
       background: var(--bg-main);
       border: 1px solid var(--border-color);
       color: var(--text-bright);
-      padding: 8px 10px;
-      border-radius: 4px;
+      padding: 6px 8px;
+      border-radius: 3px;
       font-family: var(--font-mono);
       width: 100%;
-      margin-top: 6px;
-      font-size: 0.85rem;
+      margin-top: 5px;
+      font-size: 0.8rem;
+    }
+
+    .input-field:focus {
+      border-color: var(--border-accent);
+      outline: none;
     }
 
     .error-msg {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       color: var(--accent-red);
-      margin-top: 4px;
-      min-height: 16px;
+      margin-top: 3px;
+      min-height: 14px;
       font-weight: bold;
     }
 
     .result-banner {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: bold;
-      margin-top: 8px;
-      padding: 6px;
-      border-radius: 4px;
+      margin-top: 6px;
+      padding: 5px;
+      border-radius: 3px;
       text-align: center;
       display: none;
     }
-    .result-banner.win { background: rgba(0, 255, 136, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
-    .result-banner.loss { background: rgba(255, 77, 77, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
+    .result-banner.win { background: rgba(0, 255, 136, 0.12); color: var(--accent-green); border: 1px solid var(--accent-green); }
+    .result-banner.loss { background: rgba(255, 77, 77, 0.12); color: var(--accent-red); border: 1px solid var(--accent-red); }
 
     /* Coin Animation */
     .coin-container {
       perspective: 1000px;
-      width: 70px;
-      height: 70px;
-      margin: 10px auto;
+      width: 60px;
+      height: 60px;
+      margin: 8px auto;
     }
 
     .coin {
@@ -268,60 +273,60 @@
       justify-content: center;
       font-weight: bold;
       color: #000;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       backface-visibility: hidden;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
     }
 
     /* Cards */
     .cards-area {
       display: flex;
-      gap: 8px;
-      margin: 10px 0;
+      gap: 6px;
+      margin: 8px 0;
       flex-wrap: wrap;
-      min-height: 75px;
+      min-height: 68px;
     }
 
     .playing-card {
       background: #fff;
       color: #000;
-      width: 50px;
-      height: 72px;
-      border-radius: 5px;
+      width: 44px;
+      height: 64px;
+      border-radius: 4px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 6px;
+      padding: 4px;
       font-weight: bold;
-      font-size: 0.85rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      font-size: 0.8rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
       line-height: 1.1;
     }
 
     .playing-card.red { color: #d32f2f; }
-    .playing-card.hidden { background: #1e2638; color: #94a3b8; justify-content: center; align-items: center; font-size: 1.2rem; }
+    .playing-card.hidden { background: #1f293d; color: #8a99ad; justify-content: center; align-items: center; font-size: 1.1rem; }
 
     /* Asset Market Rows */
     .asset-row {
       background: var(--bg-main);
       border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
     }
 
     .asset-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       flex-wrap: wrap;
       gap: 6px;
     }
 
-    .asset-name { font-size: 0.9rem; font-weight: bold; color: var(--text-bright); }
-    .asset-rate { font-size: 0.7rem; color: var(--accent-green); }
-    .asset-metrics { font-size: 0.7rem; color: var(--text-dim); text-align: right; }
+    .asset-name { font-size: 0.85rem; font-weight: bold; color: var(--text-bright); }
+    .asset-rate { font-size: 0.65rem; color: var(--accent-green); }
+    .asset-metrics { font-size: 0.65rem; color: var(--text-dim); text-align: right; }
 
     .asset-controls-grid {
       display: grid;
@@ -330,26 +335,26 @@
       align-items: center;
     }
 
-    .btn-sm { padding: 6px 10px; font-size: 0.75rem; width: auto; margin-top: 0; }
+    .btn-sm { padding: 5px 8px; font-size: 0.7rem; width: auto; margin-top: 0; }
 
     .help-section {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-dim);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
-    .help-section h4 { color: var(--brand-text); margin-top: 10px; margin-bottom: 4px; text-transform: uppercase; font-size: 0.8rem; }
+    .help-section h4 { color: var(--brand-text); margin-top: 8px; margin-bottom: 3px; text-transform: uppercase; font-size: 0.75rem; }
 
     .console-box {
       background-color: var(--bg-main);
       border: 1px dashed var(--border-color);
       border-radius: 4px;
-      padding: 10px;
-      font-size: 0.75rem;
+      padding: 8px;
+      font-size: 0.7rem;
       color: var(--accent-green);
-      height: 90px;
+      height: 80px;
       overflow-y: auto;
-      margin-top: 14px;
+      margin-top: 12px;
       white-space: pre-wrap;
     }
   </style>
@@ -359,11 +364,11 @@
   <header>
     <div class="brand-container">
       <svg class="bread-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 28C12 16 20 10 32 10C44 10 52 16 52 28C55 35 53 50 47 50H17C11 50 9 35 12 28Z" fill="#0a0d12" stroke="#00f0ff" stroke-width="3"/>
-        <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M12 28C12 16 20 10 32 10C44 10 52 16 52 28C55 35 53 50 47 50H17C11 50 9 35 12 28Z" fill="#0c1017" stroke="#00f0ff" stroke-width="2.5"/>
+        <path d="M22 20L26 38M32 18L32 40M42 20L38 38" stroke="#00ff88" stroke-width="2" stroke-linecap="round"/>
       </svg>
       <div>
-        <div class="brand-title">Chris Bridgeforth presents: breadgetters <span class="version-tag">| v5.2</span></div>
+        <div class="brand-title">Chris Bridgeforth presents: breadgetters <span class="version-tag">| v5.3</span></div>
         <div class="brand-subtitle">FINANCIAL TERMINAL & WEALTH ACCELERATOR</div>
       </div>
     </div>
@@ -384,7 +389,7 @@
       </div>
       <div class="stat-pill">
         <div class="stat-label">Assets Held</div>
-        <div class="stat-value" id="top-assets-summary" style="font-size:0.75rem; color:var(--brand-text);">0 Units</div>
+        <div class="stat-value" id="top-assets-summary" style="font-size:0.7rem; color:var(--brand-text);">0 Units</div>
       </div>
     </div>
   </header>
@@ -416,7 +421,7 @@
           <input type="number" id="coin-wager" class="input-field" value="10" min="1" oninput="updateGameHUDs()">
           <div class="error-msg" id="cf-error"></div>
           <div class="result-banner" id="cf-banner"></div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
             <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('HEADS')">FLIP HEADS</button>
             <button class="btn-action" style="margin-top:0;" onclick="playCoinFlip('TAILS')">FLIP TAILS</button>
           </div>
@@ -430,20 +435,20 @@
             <div>Wager: <span id="bj-hud-wager">$25.00</span></div>
           </div>
           <div class="stat-label">BLACKJACK (3:2 PAYOUT)</div>
-          <div id="bj-status" style="font-size: 0.75rem; margin: 6px 0; color: var(--text-dim);">Place wager & deal.</div>
+          <div id="bj-status" style="font-size: 0.7rem; margin: 4px 0; color: var(--text-dim);">Place wager & deal.</div>
           
-          <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Dealer Hand:</div>
+          <div style="font-size:0.6rem; color:var(--text-dim); text-transform:uppercase;">Dealer Hand:</div>
           <div class="cards-area" id="dealer-cards">
             <div class="playing-card hidden">?</div>
           </div>
 
-          <div style="font-size:0.65rem; color:var(--text-dim); text-transform:uppercase;">Your Hand:</div>
+          <div style="font-size:0.6rem; color:var(--text-dim); text-transform:uppercase;">Your Hand:</div>
           <div class="cards-area" id="player-cards"></div>
 
           <input type="number" id="bj-wager" class="input-field" value="25" min="1" oninput="updateGameHUDs()">
           <div class="error-msg" id="bj-error"></div>
           <div class="result-banner" id="bj-banner"></div>
-          <div style="display: flex; gap: 6px; margin-top: 8px;">
+          <div style="display: flex; gap: 5px; margin-top: 6px;">
             <button class="btn-action btn-sm" id="bj-deal" onclick="startBlackjack()">DEAL</button>
             <button class="btn-action btn-sm" id="bj-hit" onclick="hitBlackjack()" disabled>HIT</button>
             <button class="btn-action btn-sm" id="bj-stand" onclick="standBlackjack()" disabled>STAND</button>
@@ -454,7 +459,7 @@
 
     <!-- TAB 2: Asset Market -->
     <div id="tab-assets" class="tab-content">
-      <div class="stat-label" style="margin-bottom: 10px;">INVESTMENT PORTFOLIO, COST BASIS & GAIN/LOSS TRACKING</div>
+      <div class="stat-label" style="margin-bottom: 8px;">INVESTMENT PORTFOLIO, COST BASIS & GAIN/LOSS TRACKING</div>
       <div id="asset-list"></div>
     </div>
 
@@ -470,21 +475,21 @@
       <div class="stat-label">GAME RULES & SYSTEM DOCUMENTATION</div>
       <div class="help-section">
         <h4>Overview</h4>
-        <p>Welcome to <strong>Chris Bridgeforth presents: breadgetters</strong>. Grow your net worth through strategic gambling and long-term asset investments.</p>
+        <p>Welcome to <strong>Chris Bridgeforth presents: breadgetters v5.3</strong>. Grow your net worth through strategic risk and long-term asset investments.</p>
         
-        <h4>Gambling Suite</h4>
+        <h4>Gambling Floor</h4>
         <p><strong>Coin Flip:</strong> Wager liquid cash on Heads or Tails. Correct guesses double your wager (1:1 payout).</p>
-        <p><strong>Blackjack:</strong> Play against the dealer. Aces count as 1 or 11. Beat the dealer's total without going over 21 to win. Natural blackjacks pay 3:2.</p>
+        <p><strong>Blackjack:</strong> Play against the house. Aces count as 1 or 11. Beat the dealer's total without busting to win. Natural blackjacks pay 3:2.</p>
 
         <h4>Asset Market & Cost Basis</h4>
-        <p><strong>Per Annum (P.A.):</strong> Means "per year". Assets compound continuously in real-time based on their annual percentage yield:</p>
+        <p><strong>Per Annum (P.A.):</strong> Assets compound continuously in real-time based on their annual percentage yield:</p>
         <ul>
           <li>Stocks Pool: 8% P.A.</li>
           <li>Land Holdings: 7% P.A.</li>
           <li>Real Estate: 6% P.A.</li>
           <li>Precious Metals: 5% P.A.</li>
         </ul>
-        <p>Each asset tracks your total <strong>Cost Basis</strong>, <strong>Current Value</strong>, and <strong>Net/Percentage Gain or Loss</strong> so you can audit investment growth over time.</p>
+        <p>Each asset tracks your total <strong>Cost Basis</strong>, <strong>Current Value</strong>, and <strong>Net/Percentage Gain or Loss</strong> so you can audit portfolio performance over time.</p>
 
         <h4>Peak Net Worth (ATH)</h4>
         <p>Your highest recorded combined net worth (Cash + Active Asset Valuation) is permanently tracked in the gold telemetry pill at the top.</p>
@@ -493,7 +498,7 @@
   </div>
 
   <div class="console-box" id="terminal-console">
-[SYSTEM] Chris Bridgeforth presents: breadgetters v5.2 initialized.
+[SYSTEM] Chris Bridgeforth presents: breadgetters v5.3 initialized.
 [SYSTEM] Starting balance: $100.00. Ready for execution.
   </div>
 
@@ -742,40 +747,57 @@
     }
 
     // Asset Market with Cost Basis & Realized Gain/Loss Tracking
+    let assetMarketInitialized = false;
+
     function renderAssets() {
       const list = document.getElementById('asset-list');
-      list.innerHTML = '';
-
-      assets.forEach((a, idx) => {
-        const currentVal = a.units * a.price;
-        const netGainLoss = currentVal - a.costBasis;
-        const pctGainLoss = a.costBasis > 0 ? (netGainLoss / a.costBasis) * 100 : 0;
-        const isPos = netGainLoss >= 0;
-
-        const row = document.createElement('div');
-        row.className = 'asset-row';
-        row.innerHTML = `
-          <div class="asset-header">
-            <div>
-              <div class="asset-name">${a.name} (${a.units} Owned)</div>
-              <div class="asset-rate">+${(a.rate * 100).toFixed(0)}% P.A. | Price: $${a.price.toFixed(2)}</div>
-            </div>
-            <div class="asset-metrics">
-              <div>Cost Basis: $${a.costBasis.toFixed(2)}</div>
-              <div style="color: ${isPos ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight: bold;">
-                Net: ${isPos ? '+' : ''}$${netGainLoss.toFixed(2)} (${isPos ? '+' : ''}${pctGainLoss.toFixed(1)}%)
+      
+      if (!assetMarketInitialized) {
+        list.innerHTML = '';
+        assets.forEach((a, idx) => {
+          const row = document.createElement('div');
+          row.className = 'asset-row';
+          row.id = `asset-row-${idx}`;
+          row.innerHTML = `
+            <div class="asset-header">
+              <div>
+                <div class="asset-name" id="asset-name-${idx}">${a.name} (${a.units} Owned)</div>
+                <div class="asset-rate">+${(a.rate * 100).toFixed(0)}% P.A. | Price: $<span id="asset-price-${idx}">${a.price.toFixed(2)}</span></div>
+              </div>
+              <div class="asset-metrics">
+                <div id="asset-cb-${idx}">Cost Basis: $${a.costBasis.toFixed(2)}</div>
+                <div id="asset-pl-${idx}" style="font-weight: bold;">
+                  Net: $0.00 (0.0%)
+                </div>
               </div>
             </div>
-          </div>
-          <div class="asset-controls-grid">
-            <input type="number" id="buy-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
-            <button class="btn-action btn-sm" onclick="bulkBuy(${idx})">BUY</button>
-            <input type="number" id="sell-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
-            <button class="btn-action btn-sm" onclick="bulkSell(${idx})">SELL</button>
-          </div>
-        `;
-        list.appendChild(row);
-      });
+            <div class="asset-controls-grid">
+              <input type="number" id="buy-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
+              <button class="btn-action btn-sm" onclick="bulkBuy(${idx})">BUY</button>
+              <input type="number" id="sell-qty-${idx}" class="input-field" value="1" min="1" style="margin-top:0;">
+              <button class="btn-action btn-sm" onclick="bulkSell(${idx})">SELL</button>
+            </div>
+          `;
+          list.appendChild(row);
+        });
+        assetMarketInitialized = true;
+      } else {
+        // Update values in-place so active inputs don't lose focus
+        assets.forEach((a, idx) => {
+          const currentVal = a.units * a.price;
+          const netGainLoss = currentVal - a.costBasis;
+          const pctGainLoss = a.costBasis > 0 ? (netGainLoss / a.costBasis) * 100 : 0;
+          const isPos = netGainLoss >= 0;
+
+          document.getElementById(`asset-name-${idx}`).innerText = `${a.name} (${a.units} Owned)`;
+          document.getElementById(`asset-price-${idx}`).innerText = a.price.toFixed(2);
+          document.getElementById(`asset-cb-${idx}`).innerText = `Cost Basis: $${a.costBasis.toFixed(2)}`;
+          
+          const plEl = document.getElementById(`asset-pl-${idx}`);
+          plEl.style.color = isPos ? 'var(--accent-green)' : 'var(--accent-red)';
+          plEl.innerText = `Net: ${isPos ? '+' : ''}$${netGainLoss.toFixed(2)} (${isPos ? '+' : ''}${pctGainLoss.toFixed(1)}%)`;
+        });
+      }
     }
 
     function bulkBuy(idx) {
@@ -813,7 +835,7 @@
 
         a.units -= sellQty;
         a.costBasis -= costBasisRemoved;
-        if (a.units === 0) a.costBasis = 0; // Prevent floating point dust
+        if (a.units === 0) a.costBasis = 0; // Prevent dust
 
         liquidCash += totalReturn;
         const isPos = realizedGain >= 0;
@@ -853,5 +875,4 @@
   </script>
 </body>
 </html>
-
 
